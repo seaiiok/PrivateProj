@@ -3,8 +3,8 @@ package service
 import (
 	"fmt"
 	"database/sql"
-	_ "ii.sea/libs/odbc"
-	_ "ii.sea/libs/SQLite"
+	_ "ifix.cbpc/cbpc/vendor/odbc" 
+	_ "ifix.cbpc/cbpc/vendor/SQLite"
 	"reflect"
 )
 var db *sql.DB

@@ -1,1 +1,1 @@
-project xxxx
+project xxx
