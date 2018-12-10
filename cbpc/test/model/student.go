@@ -1,15 +1,18 @@
 package model
 
-//Student xuesheng
-type student struct {
-	Name string
-	Score float32
+import(
+	"time"
+	"net/http"
+)
+type Retriever struct {
+	UserAgen string
+	TimeOut time.Duration
 }
 
-//NewStudent new stu
-func NewStudent(name string,score float32) *student {
-	return &student{
-		Name:name,
-		Score:score,
+func (r Retriever) Get(url string) string {
+	resp,err:=http.Get(url)
+	if err != nil {
+		panic(err)
 	}
 }
+
