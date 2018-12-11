@@ -50,7 +50,7 @@ type Config struct {
     Conf map[string]string
 }
 
-type header struct {
+type myHeader struct {
 	//流水号
 	ID int
 	//请求Url
@@ -59,25 +59,21 @@ type header struct {
 	Method string
 	//本机ip地址
 	Ipadrr string
-	//验证
-	Identify bool
 	//数据条数
-	Count int
-	//数据结构
-	Dstruct string
+	Check int
 	//错误
 	Error     error
 	//流程追溯
 	DataTrace []string
-	//请求资源
-	HeadMsg map[string]string
 }
 
-type body struct {
-	BodyMsg   map[int]map[string]string
+type myBody struct {
+	DataHead int
+	DataCols  []interface{}
+	DataContent  []interface{}
 }
 
 type Proto struct {
-    header
-    body
+    myHeader
+    myBody
 }
