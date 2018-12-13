@@ -1,9 +1,9 @@
 package main
 
-import(
-"ifix.cbpc/cbpc/internal/app/clients"
+import (
+	"ifix.cbpc/cbpc/internal/app/clients"
 )
 
-func main () {
-clients.Add()
+func main() {
+	clients.ClientsServiceStart()
 }
