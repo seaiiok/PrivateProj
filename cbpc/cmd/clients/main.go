@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	clients.ClientsServiceStart()
+	clients.ServiceStart()
 }

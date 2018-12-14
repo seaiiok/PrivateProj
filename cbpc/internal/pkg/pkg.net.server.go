@@ -13,11 +13,11 @@ func serverTest(w http.ResponseWriter, r *http.Request) {
 
 //内部路由
 func serveriFixTools(w http.ResponseWriter, r *http.Request) {
-	p := new(Proto)
-	p.reader2struct(r.Body)
-	p.header.ID = 100
-	b := p.struct2arraybytes()
-	w.Write(b)
+	// p := new(Proto)
+	// p.reader2struct(r.Body)
+	// p.header.ID = 100
+	// b := p.struct2arraybytes()
+	// w.Write(b)
 	// p.servercontroller(w,r)
 }
 
@@ -36,16 +36,15 @@ func serverPrint(w http.ResponseWriter, r *http.Request) (err error) {
 	return nil
 }
 
-func ServerHttpStart() {
-
-	fmt.Println(config)
+// ServerHTTPStart http service
+func ServerHTTPStart() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ifixtools", serveriFixTools)
 	mux.HandleFunc("/om", serverOm)
 	mux.HandleFunc("/test", serverTest)
 
-	err := http.ListenAndServeTLS(":"+config["serverport"], "server.crt", "server.key", mux)
+	err := http.ListenAndServeTLS(":"+config["serverport"], "./cert/server.crt", "./cert/server.key", mux)
 	if err != nil {
 		fmt.Println(err)
 	}

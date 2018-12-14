@@ -8,5 +8,5 @@ import (
 )
 
 func main() {
-	server.ServerServiceStart()
+	server.ServiceStart()
 }

@@ -146,18 +146,18 @@ func DBExecSelectMap4Config(db *sql.DB,constr string) (res map[string]string, er
 
 // 插入所有列数据
 // 一般事务
-func DBExecInsertCols(db *sql.DB,constr string,res []string) (err error) {
+func DBExecInsertRow(db *sql.DB,constr string,res []string) (err error) {
 	conn, err := db.Begin()
-	r1:=make([]interface{},len(res))
+	re:=make([]interface{},len(res))
 	for i := 0; i < len(res); i++ {
-		r1[i] = res[i]
+		re[i] = res[i]
 	}
 	stmt, err := db.Prepare(constr)
 	if err != nil {
 		return
 	}
 	defer stmt.Close()
-	rows, err := stmt.Exec(r1...)
+	rows, err := stmt.Exec(re...)
 	if err != nil {
 		conn.Rollback()
 		return
@@ -165,5 +165,32 @@ func DBExecInsertCols(db *sql.DB,constr string,res []string) (err error) {
 	fmt.Println(rows)
 	conn.Commit()
 	defer stmt.Close()
+	return
+}
+
+// 插入所有列数据
+// 一般事务
+func DBExecInsertRows(db *sql.DB,constr string,res [][]string) (err error) {
+	conn, err := db.Begin()
+
+	for c := 0; c < len(res); c++ {
+		re:=make([]interface{},len(res))
+		for i := 0; i < len(res); i++ {
+			re[i] = res[c][i]
+		}
+		stmt, err := db.Prepare(constr)
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer stmt.Close()
+		rows, err := stmt.Exec(re...)
+		if err != nil {
+			conn.Rollback()
+			fmt.Println(err)
+		}
+		fmt.Println(rows)
+		defer stmt.Close()
+	}
+	conn.Commit()
 	return
 }

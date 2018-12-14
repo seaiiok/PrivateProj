@@ -7,10 +7,22 @@ import (
 	"io/ioutil"
 	"runtime"
 )
+func NewProto() *Proto {
+	_header:=header{	
+		ProcessTrace:make([]string,0),
+		HeadMsg:make(map[string]string,0),
+	}
+	_bodymsg:=make([]map[string]string,0)
+	_body:=body{
+		BodyData:_bodymsg,
+		// BodyMsg:make(map[int]map[string]string,0),
+	}
 
+return &Proto{}
+}
 //功能追溯
 //通常每个函数都需调用
-func (p *Proto) checkInit() Proto {
+func (p *Proto) functraceInit() Proto {
 	pc, _, _, _ := runtime.Caller(1)
 	fname := runtime.FuncForPC(pc).Name()
 	if p.header.Error != nil {

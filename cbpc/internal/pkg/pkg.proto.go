@@ -52,32 +52,17 @@ var client *http.Client
 // var p *MyProto=new(MyProto)
 
 type header struct {
-	//流水号
-	ID int
-	//请求Url
-	URL string
-	//请求方式
-	Method string
-	//本机ip地址
-	Ipadrr string
-	//验证
-	Identify bool
-	//数据条数
-	Count int
-	//数据结构
-	Dstruct string
-	//错误
-	Error error
-	//流程追溯
-	DataTrace []string
 	//请求资源
 	HeadMsg map[string]string
+	//进程追溯
+	ProcessTrace []string
 }
 
 type body struct {
-	BodyMsg map[int]map[string]string
+	BodyData [][]string
 }
 
+//Proto 协议
 type Proto struct {
 	header
 	body

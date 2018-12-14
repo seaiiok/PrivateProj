@@ -3,14 +3,16 @@ package pkg
 import (
 	"crypto/tls"
 	"net/http"
+	"fmt"
 )
 
 func ClientsHttpStart() {
 	p := new(Proto)
-	p.header.Method = "POST"
-	p.header.URL = "https://192.168.1.5:494/test"
+	p.HeadMsg["method"]= "POST"
+	p.HeadMsg["url"]= "https://192.168.100.38:494/test"
 	p.clientInit()
-	p.httpPost()
+	p1:=p.httpPost()
+	fmt.Println(p1)
 }
 
 //客服端服务初始化
