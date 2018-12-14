@@ -5,34 +5,28 @@ import (
 	"sync"
 	"database/sql"
 	_ "github.com/alexbrainman/odbc"
-	// _ "github.com/mattn/go-sqlite3"
 	"reflect"
 )
 var db *sql.DB
 var once sync.Once
-var db3 *sql.DB
-var once3 sync.Once
+
 
 //数据库驱动初始化--mssql
-func GetInstance(driverName, dataSourceName string) (*sql.DB,error) {
+func GetDBInstance(driverName, dataSourceName string) error {
 	var err error
     once.Do(func() {
 		db,err=sql.Open(driverName, dataSourceName)
     })
-	return db,err
+	return err
 }
 
-//数据库驱动初始化--sqlite
-func GetInstance3(driverName, dataSourceName string) (*sql.DB,error) {
-	var err error
-    once3.Do(func() {
-		db3,err=sql.Open(driverName, dataSourceName)
-    })
-	return db3,err
+
+func Ping() error {
+return db.Ping()
 }
 
 // 一般事务
-func DBExec(db *sql.DB,constr string) error {
+func DBExec(constr string) error {
 	stmt, err := db.Prepare(constr)
 	if err != nil {
 		return err
@@ -47,7 +41,7 @@ func DBExec(db *sql.DB,constr string) error {
 
 // 查询-Keys
 // 单列记录查询 否则panic
-func DBExecSelectCol(db *sql.DB,constr string) (res []string, err error) {
+func DBExecSelectCol(constr string) (res []string, err error) {
 	res=make([]string,0)
 	stmt, err := db.Prepare(constr)
 	if err != nil {
@@ -74,7 +68,7 @@ func DBExecSelectCol(db *sql.DB,constr string) (res []string, err error) {
 
 // 查询-*
 // 多条记录查询
-func DBExecSelectCols(db *sql.DB,constr string) (res [][]string, err error) {
+func DBExecSelectRows(constr string) (res [][]string, err error) {
 	res=make([][]string,0)
 	stmt, err := db.Prepare(constr)
 	if err != nil {
@@ -110,7 +104,7 @@ func DBExecSelectCols(db *sql.DB,constr string) (res [][]string, err error) {
 
 // 查询-*
 // 配置表
-func DBExecSelectMap4Config(db *sql.DB,constr string) (res map[string]string, err error) {
+func DBExecSelectMap4Config(constr string) (res map[string]string, err error) {
 	res=make(map[string]string,0)
 	stmt, err := db.Prepare(constr)
 	if err != nil {
@@ -146,7 +140,7 @@ func DBExecSelectMap4Config(db *sql.DB,constr string) (res map[string]string, er
 
 // 插入所有列数据
 // 一般事务
-func DBExecInsertRow(db *sql.DB,constr string,res []string) (err error) {
+func DBExecInsertRow(constr string,res []string) (err error) {
 	conn, err := db.Begin()
 	re:=make([]interface{},len(res))
 	for i := 0; i < len(res); i++ {
@@ -170,7 +164,7 @@ func DBExecInsertRow(db *sql.DB,constr string,res []string) (err error) {
 
 // 插入所有列数据
 // 一般事务
-func DBExecInsertRows(db *sql.DB,constr string,res [][]string) (err error) {
+func DBExecInsertRows(constr string,res [][]string) (err error) {
 	conn, err := db.Begin()
 
 	for c := 0; c < len(res); c++ {

@@ -1,4 +1,4 @@
-package server
+package clients
 
 import (
 	"ifix.cbpc/cbpc/internal/pkg"
@@ -6,5 +6,4 @@ import (
 
 func serverInit() {
 	pkg.ConfigInit("")
-	pkg.ServerDBInit()
 }

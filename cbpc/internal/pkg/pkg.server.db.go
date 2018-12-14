@@ -1,13 +1,30 @@
 package pkg
 
 import (
-	"fmt"
-
 	"ifix.cbpc/cbpc/pkg/mssql"
-
-	//	"ifix.cbpc/cbpc/pkg/mssql"
 )
 
+func ServerDBInit() error {
+	return mssql.GetDBInstance(config["serverdbdriver"],config["serverdbconn"])
+}
+
+func ServerDBPing() error {
+	return mssql.Ping()
+}
+
+func dBExecSelectCol(constr string) (res []string, err error){
+	return mssql.DBExecSelectCol(constr)
+}
+
+func dBExecSelectRows(constr string) (res [][]string, err error) {
+	return mssql.DBExecSelectRows(constr)
+}
+
+func dBExecInsertRow(constr string, res []string) (err error){
+	return mssql.DBExecInsertRow(constr, res)
+}
+
+// func DBExecSelectRows(constr string) (res [][]string, err error) {
 //type Ms struct {
 //	D3Weight
 //}
@@ -15,20 +32,20 @@ import (
 //	ServerDatebaseGetData(req *Proto) *Proto
 //	ServerDatebaseSetData(req *Proto) *Proto
 
-func (m *D3Weight) ServerDatebaseGetReady(req *Proto) *Proto {
-	db, _ := mssql.GetInstance(config["serverdbdriver"], config["serverdbconn"])
-	res, _ := mssql.DBExecSelectCol(db, config["constrdemo"])
-	fmt.Println(res)
-	return req
-}
+// func (m *D3Weight) ServerDatebaseGetReady(req *Proto) *Proto {
+// 	db, _ := mssql.GetInstance(config["serverdbdriver"], config["serverdbconn"])
+// 	res, _ := mssql.DBExecSelectCol(db, config["constrdemo"])
+// 	fmt.Println(res)
+// 	return req
+// }
 
-func (m *D3Weight) ServerDatebaseGetData(req *Proto) *Proto {
-	return req
-}
+// func (m *D3Weight) ServerDatebaseGetData(req *Proto) *Proto {
+// 	return req
+// }
 
-func (m *D3Weight) ServerDatebaseSetData(req *Proto) *Proto {
-	return req
-}
+// func (m *D3Weight) ServerDatebaseSetData(req *Proto) *Proto {
+// 	return req
+// }
 
 //func (s *IServerDatebase)dbready
 // (config["serverdbdriver"],config["serverdbconn"])

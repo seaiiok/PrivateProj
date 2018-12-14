@@ -7,49 +7,54 @@ import (
 	"io/ioutil"
 	"runtime"
 )
+
+// //NewProto .
+// func NewProto() *Proto {
+// 	_header:=header{	
+// 		ProcessTrace:make([]string,0),
+// 		HeadMsg:make(map[string]string,0),
+// 	}
+// 	_body:=body{
+// 		BodyData:make([]string,0),
+// 		BodyDatas:make([][]string,0),
+// 	}
+// return &Proto{
+// 	header:_header,
+// 	body:_body,
+// }
+// }
+
+//NewProto .
 func NewProto() *Proto {
-	_header:=header{	
+return &Proto{
+	header:header{	
 		ProcessTrace:make([]string,0),
 		HeadMsg:make(map[string]string,0),
-	}
-	_bodymsg:=make([]map[string]string,0)
-	_body:=body{
-		BodyData:_bodymsg,
-		// BodyMsg:make(map[int]map[string]string,0),
-	}
-
-return &Proto{}
+	},
+	body:body{
+		BodyData:make([]string,0),
+		BodyDatas:make([][]string,0),
+	},
 }
-//功能追溯
+}
+
+//ProcessTrace 功能追溯
 //通常每个函数都需调用
-func (p *Proto) functraceInit() Proto {
+func (p *Proto) ProcessTrace() *Proto {
 	pc, _, _, _ := runtime.Caller(1)
 	fname := runtime.FuncForPC(pc).Name()
-	if p.header.Error != nil {
-		p.header.DataTrace = append(p.header.DataTrace, "Exist Error(Proto) before call function "+fname)
-		return *p
+	if p.header.Error !=nil {
+		p.header.ProcessTrace = append(p.header.ProcessTrace, "Exist Error(Proto) before call function "+fname)
+		return p
 	}
-	p.header.DataTrace = append(p.header.DataTrace, fname+" -OK")
-	return *p
+	p.header.ProcessTrace = append(p.header.ProcessTrace, fname+" -OK")
+	return p
+	
 }
 
-//err队列 默认不超过100条
-func (p *Proto) appenderrors(err error) {
-	lenght := len(p.header.DataTrace)
-	if lenght >= Proto_Errors {
-		p.header.DataTrace = p.header.DataTrace[lenght-Proto_Errors:]
-	}
-	p.header.DataTrace = append(p.header.DataTrace, err.Error())
-}
-
-//err的封装
-func (p *Proto) checkError(err error) error {
-	if err != nil {
-		p.appenderrors(err)
-		p.header.Error = err
-		return err
-	}
-	return err
+//checkError .
+func (p *Proto) checkError(err error) {
+	p.header.Error=err
 }
 
 //struct2reader

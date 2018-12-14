@@ -13,12 +13,8 @@ func serverTest(w http.ResponseWriter, r *http.Request) {
 
 //内部路由
 func serveriFixTools(w http.ResponseWriter, r *http.Request) {
-	// p := new(Proto)
-	// p.reader2struct(r.Body)
-	// p.header.ID = 100
-	// b := p.struct2arraybytes()
-	// w.Write(b)
-	// p.servercontroller(w,r)
+	p := NewProto()
+    p.serveriFixToolsController(w,r)
 }
 
 //管理路由

@@ -3,24 +3,19 @@ package pkg
 import (
 	"crypto/tls"
 	"net/http"
-	"fmt"
 )
-
-func ClientsHttpStart() {
-	p := new(Proto)
-	p.HeadMsg["method"]= "POST"
-	p.HeadMsg["url"]= "https://192.168.100.38:494/test"
-	p.clientInit()
-	p1:=p.httpPost()
-	fmt.Println(p1)
+var client *http.Client
+// ClientsHTTPStart 客服端
+func ClientsHTTPStart() {
+	p:=clientsHTTPInit()
+go p.clientsiFixToolsController()
 }
 
 //客服端服务初始化
-func (p *Proto) clientInit() *Proto {
-	*p = p.checkInit()
-	if p.header.Error != nil {
-		return p
-	}
+func clientsHTTPInit() *Proto {
+	p:=NewProto()
+	p.HeadMsg["method"] = "POST"
+	p.HeadMsg["url"] = "https://"+config["serveraddr"]+":"+config["serverport"]+"/ifixtools"
 	//忽略证书校验
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -32,15 +27,14 @@ func (p *Proto) clientInit() *Proto {
 //WebService post请求
 //内部
 func (p *Proto) httpPost() *Proto {
-
-	*p = p.checkInit()
-	if p.header.Error != nil {
-		return p
-	}
+if p.header.Error !=nil {
+	p.ProcessTrace()
+	return p
+}
 
 	//创建请求
-	postReq, err := http.NewRequest(p.header.Method,
-		p.header.URL,
+	postReq, err := http.NewRequest(p.header.HeadMsg["method"],
+		p.header.HeadMsg["url"],
 		p.struct2reader(),
 	)
 	p.checkError(err)
@@ -53,7 +47,7 @@ func (p *Proto) httpPost() *Proto {
 	//执行请求
 	resp, err := client.Do(postReq)
 
-	err = p.checkError(err)
+	p.checkError(err)
 	if err != nil {
 		return p
 	}
