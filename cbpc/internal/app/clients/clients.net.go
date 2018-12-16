@@ -6,6 +6,6 @@ import (
 
 // ServiceStart . 
 func ServiceStart() {
-	serverInit()
+	clientsInit()
 	pkg.ClientsHTTPStart()
 }

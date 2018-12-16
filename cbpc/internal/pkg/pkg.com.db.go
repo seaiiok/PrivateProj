@@ -12,6 +12,14 @@ func ServerDBPing() error {
 	return mssql.Ping()
 }
 
+func ClientsDBInit() error {
+	return mssql.GetDBInstance(config["clientsd3weightdbdriver"],config["clientsd3weightdbconn"])
+}
+
+func ClientsDBPing() error {
+	return mssql.Ping()
+}
+
 func dBExecSelectCol(constr string) (res []string, err error){
 	return mssql.DBExecSelectCol(constr)
 }
@@ -23,6 +31,11 @@ func dBExecSelectRows(constr string) (res [][]string, err error) {
 func dBExecInsertRow(constr string, res []string) (err error){
 	return mssql.DBExecInsertRow(constr, res)
 }
+
+func dBExecInsertRows(constr string, res [][]string) (err error){
+	return mssql.DBExecInsertRows(constr, res)
+}
+
 
 // func DBExecSelectRows(constr string) (res [][]string, err error) {
 //type Ms struct {

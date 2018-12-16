@@ -13,13 +13,13 @@ const (
 
 const (
 	Proto_Cmd                      = "Ladygaga"
-	Proto_Cmd_Resp                 = "响应"
-	Proto_Cmd_Resp_Yes             = "YES"
-	Proto_Cmd_Resp_No              = "NO"
-	Proto_Cmd_Resp_Again           = "重来"
-	Proto_Cmd_Req_Ready            = "准备"
-	Proto_Cmd_Req_KeyCols          = "唯一键"
-	Proto_Cmd_Req_InsertRows       = "存储"
+	Proto_Cmd_Restart              = "重来"
+	Proto_Cmd_Again                = "再来"
+	Proto_Cmd_1th                  = "Proto_Cmd_1th"
+	Proto_Cmd_2th                  = "Proto_Cmd_2th"
+	Proto_Cmd_3th                  = "Proto_Cmd_3th"
+	Proto_Cmd_4th                  = "Proto_Cmd_4th"
+	Proto_Cmd_5th                  = "Proto_Cmd_5th"
 	Proto_Cmd_ServerDriver         = "金刚芭比-小哪吒"
 	Proto_Map_ServerConn           = "是他,是他,是他,就是他,我们的朋友小哪吒"
 	Proto_Map_ServerTableName      = "是他,就是他,是他,就是他,少年英雄小哪吒"
@@ -37,9 +37,27 @@ const (
 	Proto_Map_ClientsTask          = "啦啦啦啦~啦啦啦啦~8"
 )
 
+//严格的
+const (
+	Proto_Conf_ProcessTraceSum = 5
+	Proto_Conf_Task_d3weight = "d3weight"
+	Proto_Conf_Task_jwonlinefile = "jwonlinefile"
+	Proto_Conf_Task_jwofflinedb = "jwofflinedb"
+	Proto_Conf_Task_jfofflinefile = "jfofflinefile"
+	Proto_Conf_Task_jfofflinedb = "jfofflinedb"
+)
+
+
 //配置文件Map
 const (
-	Proto_Conf_serverdbkeycol            = "serverdbkeycol"
+	Proto_Conf_serverdbdriver            = "serverdbdriver"
+	Proto_Conf_serverdbconn              = "serverdbconn"
+	Proto_Conf_serverd3weightkeycol      = "serverd3weightkeycol"
+	Proto_Conf_serverd3weightinsertrows  = "serverd3weightinsertrows"
+	Proto_Conf_clientsd3weightdbdriver   = "clientsd3weightdbdriver"
+	Proto_Conf_clientsd3weightdbconn     = "clientsd3weightdbconn"
+	Proto_Conf_clientsd3weightdbkeycol   = "clientsd3weightdbkeycol"
+	Proto_Conf_clientsd3weightkeycol     = "clientsd3weightkeycol"
 	Proto_Conf_clientsd3weightselectrows = "clientsd3weightselectrows"
-	Proto_Conf_clientsd3weightinsertrows = "clientsd3weightinsertrows"
+	Proto_Conf_clientstask                 = "clientstask"
 )

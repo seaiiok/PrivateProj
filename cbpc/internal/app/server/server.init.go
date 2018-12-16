@@ -5,6 +5,6 @@ import (
 )
 
 func serverInit() {
-	pkg.ConfigInit("")
+	pkg.ServerConfigInit("")
 	pkg.ServerDBInit()
 }

@@ -1,14 +1,12 @@
 package pkg
 
 import (
-	"fmt"
+	"ifix.cbpc/cbpc/pkg/log"
 	"net/http"
 )
 
 //测试路由
 func serverTest(w http.ResponseWriter, r *http.Request) {
-	var b []byte = []byte("测试路由")
-	w.Write(b)
 }
 
 //内部路由
@@ -22,16 +20,6 @@ func serverOm(w http.ResponseWriter, r *http.Request) {
 	//	serverPrint(w, r)
 }
 
-//打印输出  临时使用
-func serverPrint(w http.ResponseWriter, r *http.Request) (err error) {
-	fmt.Println(r.RemoteAddr)
-	fmt.Println(r.Proto)
-	fmt.Println(r.Method)
-	w.Write([]byte("i am zognjian om"))
-	fmt.Println(r.Header)
-	return nil
-}
-
 // ServerHTTPStart http service
 func ServerHTTPStart() {
 
@@ -42,6 +30,6 @@ func ServerHTTPStart() {
 
 	err := http.ListenAndServeTLS(":"+config["serverport"], "./cert/server.crt", "./cert/server.key", mux)
 	if err != nil {
-		fmt.Println(err)
+		log.Log(err)
 	}
 }

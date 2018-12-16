@@ -1,94 +1,103 @@
 package pkg
 
 import (
-	"net/http"
 	"fmt"
+	"net/http"
 )
-
+type tempsqlstr struct {
+	tempsqlstr1 string
+	tempsqlstr2 string
+	tempsqlstr3 string
+}
 //内部中间件
-func (p *Proto)serveriFixToolsController(w http.ResponseWriter, r *http.Request) {
+func (p *Proto) serveriFixToolsController(w http.ResponseWriter, r *http.Request) {
 	p.reader2struct(r.Body)
 	p.serveriFixToolsControllerTask(w)
 }
 
 //内部中间件
-func (p *Proto)serveriFixToolsControllerTask(w http.ResponseWriter) {
+func (p *Proto) serveriFixToolsControllerTask(w http.ResponseWriter) {
+	fmt.Println(p.header.ProcessTrace)
+	p.ProcessTrace(p.header.HeadMsg[Proto_Cmd])
 	switch p.header.HeadMsg[Proto_Cmd] {
-
-	case Proto_Cmd_Req_Ready:
-	err:=ServerDBPing()
-	if err != nil {
-		p.header.HeadMsg[Proto_Cmd_Resp]=Proto_Cmd_Resp_No
-		p.header.HeadMsg[Proto_Cmd]=Proto_Cmd_Resp_Again
-		fmt.Println("---1---no")
-	}else{
-		p.header.HeadMsg[Proto_Cmd_Resp]=Proto_Cmd_Resp_Yes
-		p.header.HeadMsg[Proto_Cmd]=Proto_Cmd_Req_KeyCols
-		fmt.Println("---1---yes")
-	}
-	for k, v := range config {
-		p.header.HeadMsg[k]=v
-	}
-	b := p.struct2arraybytes()
-	w.Write(b)
-	return
-
-	case Proto_Cmd_Req_KeyCols:
-
-		col,err:=dBExecSelectCol(p.header.HeadMsg[Proto_Conf_serverdbkeycol])
-		if err != nil {
-			p.header.HeadMsg[Proto_Cmd_Resp]=Proto_Cmd_Resp_No
-			p.header.HeadMsg[Proto_Cmd]=Proto_Cmd_Resp_Again
-			fmt.Println("---2---no")
-
-		}else{
-			p.header.HeadMsg[Proto_Cmd_Resp]=Proto_Cmd_Resp_Yes
-			p.header.HeadMsg[Proto_Cmd]=Proto_Cmd_Req_InsertRows
-			p.body.BodyData=col
-			fmt.Println("---2---yes")
+	//客服端的任务确认
+	case Proto_Cmd_1th:
+		if p.header.HeadMsg[Proto_Conf_clientstask] != "unknown" {
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_2th
+		} else {
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Restart
 		}
-		b := p.struct2arraybytes()
-		w.Write(b)
-		return
 
-	case Proto_Cmd_Req_InsertRows:
-		res,_:=dBExecSelectRows(p.header.HeadMsg[Proto_Conf_clientsd3weightselectrows])
-		fmt.Println(res)
-		err:=dBExecInsertRow(p.header.HeadMsg[Proto_Conf_clientsd3weightinsertrows],res[0])
-		if err != nil {
-			p.header.HeadMsg[Proto_Cmd_Resp]=Proto_Cmd_Resp_No
-			p.header.HeadMsg[Proto_Cmd]=Proto_Cmd_Resp_Again
-			fmt.Println("---3---no")
-
-		}else{
-			p.header.HeadMsg[Proto_Cmd_Resp]=Proto_Cmd_Resp_Yes
-			p.header.HeadMsg[Proto_Cmd]=Proto_Cmd_Req_InsertRows
-			fmt.Println("---3---yes")
-		}
-		b := p.struct2arraybytes()
-		w.Write(b)
-		return
-
-	case Proto_Cmd_Resp_Again:
-		err:=ServerDBPing()
-		if err != nil {
-			p.header.HeadMsg[Proto_Cmd_Resp]=Proto_Cmd_Resp_No
-			p.header.HeadMsg[Proto_Cmd]=Proto_Cmd_Resp_Again
-			fmt.Println("---a---no")
-		}else{
-			p.header.HeadMsg[Proto_Cmd_Resp]=Proto_Cmd_Resp_Yes
-			p.header.HeadMsg[Proto_Cmd]=Proto_Cmd_Req_KeyCols
-			fmt.Println("---a---yes")
-		}
 		for k, v := range config {
-			p.header.HeadMsg[k]=v
+			p.header.HeadMsg[k] = v
 		}
+
 		b := p.struct2arraybytes()
 		w.Write(b)
 		return
-	default:
-				
-	}
-	
 
+		//服务端数据库自检
+	case Proto_Cmd_2th:
+
+		err := ServerDBPing()
+		if err != nil {
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Restart
+		} else {
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_3th
+		}
+
+		b := p.struct2arraybytes()
+		w.Write(b)
+		return
+
+	case Proto_Cmd_3th:
+		col, err := dBExecSelectCol(SqlStringMakeDTime(config[Proto_Conf_serverd3weightkeycol]))
+		fmt.Println(p.body.BodyData)
+		fmt.Println(col)
+		resarr := ArrayDiff(p.body.BodyData,col)
+		fmt.Println(resarr)
+		if err != nil || len(resarr)==0 {
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Again
+
+		} else {
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_4th
+			p.body.BodyData = make([]string, 0)
+			p.body.BodyData = resarr
+		}
+
+		b := p.struct2arraybytes()
+		w.Write(b)
+		return
+
+	case Proto_Cmd_4th:
+
+		err := dBExecInsertRows(config[Proto_Conf_serverd3weightinsertrows], p.body.BodyDatas)
+		if err != nil {
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Again
+		} else {
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_5th
+		}
+
+		b := p.struct2arraybytes()
+		w.Write(b)
+		return
+
+	default:
+
+	}
+
+}
+
+func (p *Proto)dBExecSelectColMapClient() string {
+	tss:=new(tempsqlstr)
+	switch p.header.HeadMsg[Proto_Conf_clientstask] {
+	case Proto_Conf_Task_d3weight:
+		tss.tempsqlstr1=""
+	}
+	if p.header.HeadMsg[Proto_Conf_clientstask] != "unknown" {
+		p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_2th
+	} else {
+		p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Restart
+	}
+	return tss
 }
