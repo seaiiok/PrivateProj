@@ -10,6 +10,7 @@ type header struct {
 }
 
 type body struct {
+	MyConf map[string]string
 	BodyData []string
 	BodyDatas [][]string
 }

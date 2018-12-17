@@ -1,32 +1,38 @@
 package pkg
 
-// import (
-// 	"ifix.cbpc/cbpc/internal/pkg/pkg.producter"
-// )
+import (
+	"ifix.cbpc/cbpc/pkg/mssql"
+)
 
-// var clientsproducterdata clientsproducter.IProducte
+//clients data interface
+type IProducte interface {
+	ClientsProducterGetReady() error
+	ClientsProducterGetData() []string
+	ClientsProducterGetDatas() [][]string
+}
 
+type clientsd3weight struct {
+	clients body
+}
 
-// func clientsd3weightproducter1() *clientsproducter.ClientsD3weight {
-// 	var clientsd3weightparams clientsproducter.ClientsD3weight
-// 	clientsd3weightparams.Clientsd3weightdbdriver = config["clientsd3weightdbdriver"]
-// 	clientsd3weightparams.Clientsd3weightdbconn = config["clientsd3weightdbconn"]
-// 	clientsd3weightparams.Clientsd3weightkeycol = config["clientsd3weightkeycol"]
-// 	clientsd3weightparams.Clientsd3weightselectrows = config["clientsd3weightselectrows"]
-// 	return &clientsd3weightparams
-// }
+func (p *clientsd3weight) ClientsProducterGetReady() error {
+	err := mssql.GetDBInstance(p.clients.MyConf[Proto_SQL_clientsdbdriver], p.clients.MyConf[Proto_SQL_clientsdbconn])
+	err = mssql.Ping()
+	return err
+}
 
-// func clientsd3weightproducter2(cp *clientsproducter.ClientsD3weight ) {
-// 	clientsproducterdata = cp
-// 	clientsproducterdata.ClientsProducterGetReady()
-// }
+func (p *clientsd3weight) ClientsProducterGetData() []string {
+	res, err := mssql.DBExecSelectCol(p.clients.MyConf[Proto_SQL_clientsdbcol])
+	if err != nil {
+		return nil
+	}
+	return res
+}
 
-// func clientsd3weightproducter3(cp *clientsproducter.ClientsD3weight ) {
-// 	clientsproducterdata = cp
-// 	clientsproducterdata.ClientsProducterGetData()
-// }
-
-// func clientsd3weightproducter4(cp *clientsproducter.ClientsD3weight ) {
-// 	clientsproducterdata = cp
-// 	clientsproducterdata.ClientsProducterGetDatas()
-// }
+func (p *clientsd3weight) ClientsProducterGetDatas() [][]string {
+	res, err := mssql.DBExecSelectRows(p.clients.MyConf[Proto_SQL_clientsdbrows])
+	if err != nil {
+		return nil
+	}
+	return res
+}

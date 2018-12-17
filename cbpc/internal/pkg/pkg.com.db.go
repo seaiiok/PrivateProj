@@ -4,72 +4,42 @@ import (
 	"ifix.cbpc/cbpc/pkg/mssql"
 )
 
+// serverdbdriver serverdbconn serverdbcol insertdbrows clientsdbdriver clientsdbconn clientsdbcol clientsdbrows
+
 func ServerDBInit() error {
-	return mssql.GetDBInstance(config["serverdbdriver"],config["serverdbconn"])
+	return mssql.GetDBInstance(config[Proto_SQL_serverdbdriver], config[Proto_SQL_serverdbconn])
 }
 
-func ServerDBPing() error {
+func (c *Proto) ServerDBPing() error {
 	return mssql.Ping()
 }
 
-func ClientsDBInit() error {
-	return mssql.GetDBInstance(config["clientsd3weightdbdriver"],config["clientsd3weightdbconn"])
+func (c *Proto) ServerDBExecSelectCol() (res []string, err error) {
+	c.sqlStringMakeDTimes(config[Proto_SQL_serverdbcol])
+	return mssql.DBExecSelectCol(c.MyConf[Proto_SQL_serverdbcol])
 }
 
-func ClientsDBPing() error {
+func (c *Proto) ServerDBExecInsertRows() (err error) {
+	c.sqlStringServerMakeRows(config[Proto_SQL_serverdbrows])
+	return mssql.DBExecInsertRows(c.MyConf[Proto_SQL_serverdbrows], c.BodyDatas)
+}
+
+func (c *Proto) ClientsDBInit() error {
+	return mssql.GetDBInstance(c.MyConf[Proto_SQL_clientsdbdriver], c.MyConf[Proto_SQL_clientsdbconn])
+}
+
+func (c *Proto) ClientsDBPing() error {
 	return mssql.Ping()
 }
 
-func dBExecSelectCol(constr string) (res []string, err error){
-	return mssql.DBExecSelectCol(constr)
+func (c *Proto) ClientsDBExecSelectCol() (res []string, err error) {
+	return mssql.DBExecSelectCol(c.body.MyConf[Proto_SQL_clientsdbcol])
 }
 
-func dBExecSelectRows(constr string) (res [][]string, err error) {
-	return mssql.DBExecSelectRows(constr)
+func (c *Proto) ClientsDBExecSelectRows() (res [][]string, err error) {
+	return mssql.DBExecSelectRows(c.body.MyConf[Proto_SQL_clientsdbrows])
 }
 
-func dBExecInsertRow(constr string, res []string) (err error){
-	return mssql.DBExecInsertRow(constr, res)
-}
-
-func dBExecInsertRows(constr string, res [][]string) (err error){
-	return mssql.DBExecInsertRows(constr, res)
-}
-
-
-// func DBExecSelectRows(constr string) (res [][]string, err error) {
-//type Ms struct {
-//	D3Weight
-//}
-//	ServerDatebaseGetReady(req *Proto) *Proto
-//	ServerDatebaseGetData(req *Proto) *Proto
-//	ServerDatebaseSetData(req *Proto) *Proto
-
-// func (m *D3Weight) ServerDatebaseGetReady(req *Proto) *Proto {
-// 	db, _ := mssql.GetInstance(config["serverdbdriver"], config["serverdbconn"])
-// 	res, _ := mssql.DBExecSelectCol(db, config["constrdemo"])
-// 	fmt.Println(res)
-// 	return req
+// func (c *body)DBExecInsertRow(constr string, res []string) (err error){
+// 	return mssql.DBExecInsertRow(constr, res)
 // }
-
-// func (m *D3Weight) ServerDatebaseGetData(req *Proto) *Proto {
-// 	return req
-// }
-
-// func (m *D3Weight) ServerDatebaseSetData(req *Proto) *Proto {
-// 	return req
-// }
-
-//func (s *IServerDatebase)dbready
-// (config["serverdbdriver"],config["serverdbconn"])
-// driver:="odbc"
-// conn:="driver={SQL Server};Server=192.168.1.18;uid=sa;pwd=kmtSoft12345678;port=1433;Database=CMTWeight121701"
-// msdb,err:=db.GetInstance(driver,conn)
-// if err != nil {
-// 	fmt.Println(err)
-// }
-// res,err:=db.DBExecSelectCols(msdb,"select F_ID from T_Standard")
-// if err != nil {
-// 	fmt.Println(err)
-// }
-// fmt.Println(res)

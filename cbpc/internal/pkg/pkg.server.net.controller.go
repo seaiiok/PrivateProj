@@ -4,11 +4,7 @@ import (
 	"fmt"
 	"net/http"
 )
-type tempsqlstr struct {
-	tempsqlstr1 string
-	tempsqlstr2 string
-	tempsqlstr3 string
-}
+
 //内部中间件
 func (p *Proto) serveriFixToolsController(w http.ResponseWriter, r *http.Request) {
 	p.reader2struct(r.Body)
@@ -17,21 +13,18 @@ func (p *Proto) serveriFixToolsController(w http.ResponseWriter, r *http.Request
 
 //内部中间件
 func (p *Proto) serveriFixToolsControllerTask(w http.ResponseWriter) {
-	fmt.Println(p.header.ProcessTrace)
 	p.ProcessTrace(p.header.HeadMsg[Proto_Cmd])
+	fmt.Println(p.header.ProcessTrace)
 	switch p.header.HeadMsg[Proto_Cmd] {
 	//客服端的任务确认
 	case Proto_Cmd_1th:
-		if p.header.HeadMsg[Proto_Conf_clientstask] != "unknown" {
-			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_2th
-		} else {
+
+		err := p.GetServerConf()
+		if err != nil {
 			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Restart
+		} else {
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_2th
 		}
-
-		for k, v := range config {
-			p.header.HeadMsg[k] = v
-		}
-
 		b := p.struct2arraybytes()
 		w.Write(b)
 		return
@@ -39,7 +32,7 @@ func (p *Proto) serveriFixToolsControllerTask(w http.ResponseWriter) {
 		//服务端数据库自检
 	case Proto_Cmd_2th:
 
-		err := ServerDBPing()
+		err := p.ServerDBPing()
 		if err != nil {
 			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Restart
 		} else {
@@ -50,17 +43,24 @@ func (p *Proto) serveriFixToolsControllerTask(w http.ResponseWriter) {
 		w.Write(b)
 		return
 
+	//开始任务
 	case Proto_Cmd_3th:
-		col, err := dBExecSelectCol(SqlStringMakeDTime(config[Proto_Conf_serverd3weightkeycol]))
-		fmt.Println(p.body.BodyData)
+		p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_4th
+		b := p.struct2arraybytes()
+		w.Write(b)
+		return
+
+	case Proto_Cmd_4th:
+
+		col, err := p.ServerDBExecSelectCol()
 		fmt.Println(col)
-		resarr := ArrayDiff(p.body.BodyData,col)
-		fmt.Println(resarr)
-		if err != nil || len(resarr)==0 {
+		resarr := ArrayDiff(p.body.BodyData, col)
+
+		if err != nil || len(resarr) == 0 {
 			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Again
 
 		} else {
-			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_4th
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_5th
 			p.body.BodyData = make([]string, 0)
 			p.body.BodyData = resarr
 		}
@@ -69,35 +69,36 @@ func (p *Proto) serveriFixToolsControllerTask(w http.ResponseWriter) {
 		w.Write(b)
 		return
 
-	case Proto_Cmd_4th:
+	case Proto_Cmd_5th:
 
-		err := dBExecInsertRows(config[Proto_Conf_serverd3weightinsertrows], p.body.BodyDatas)
+		err := p.ServerDBExecInsertRows()
 		if err != nil {
 			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Again
 		} else {
-			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_5th
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_6th
 		}
 
 		b := p.struct2arraybytes()
 		w.Write(b)
 		return
 
+	case Proto_Cmd_Restart:
+		p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_1th
+		b := p.struct2arraybytes()
+		w.Write(b)
+		return
+
+	case Proto_Cmd_Again:
+		p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_2th
+		b := p.struct2arraybytes()
+		w.Write(b)
+		return
+
 	default:
 
+		b := p.struct2arraybytes()
+		w.Write(b)
+		return
 	}
 
-}
-
-func (p *Proto)dBExecSelectColMapClient() string {
-	tss:=new(tempsqlstr)
-	switch p.header.HeadMsg[Proto_Conf_clientstask] {
-	case Proto_Conf_Task_d3weight:
-		tss.tempsqlstr1=""
-	}
-	if p.header.HeadMsg[Proto_Conf_clientstask] != "unknown" {
-		p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_2th
-	} else {
-		p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Restart
-	}
-	return tss
 }

@@ -31,13 +31,10 @@ func ClientsConfigInit(path string) (err error) {
 	return
 }
 
-//保持
+//保存
 func ConfigSet(path string, config map[string]string) (err error) {
 	fmt.Println(config)
 	err=conf.SetConfKV(path, config)
 	return 
 }
 
-// if pkg.clientsconfig["clientstask"] !="" || pkg.clientsconfig["clientstask"] !="unkown"{
-// 	g := pkg.ClientStartInput()
-// }

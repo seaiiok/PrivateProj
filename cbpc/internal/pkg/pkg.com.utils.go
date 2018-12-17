@@ -23,6 +23,7 @@ func NewProto() *Proto {
 			HeadMsg:      make(map[string]string, 0),
 		},
 		body: body{
+			MyConf:    make(map[string]string, 0),
 			BodyData:  make([]string, 0),
 			BodyDatas: make([][]string, 0),
 		},
@@ -59,22 +60,19 @@ func (p *Proto) checkError(err error) {
 
 //struct2reader
 func (p *Proto) struct2reader() io.Reader {
-	b, err := json.Marshal(p)
-	p.checkError(err)
+	b, _ := json.Marshal(p)
 	return bytes.NewReader(b)
 }
 
 //reader2struct
 func (p *Proto) reader2struct(r io.Reader) {
-	b, err := ioutil.ReadAll(r)
-	p.checkError(err)
+	b, _ := ioutil.ReadAll(r)
 	json.Unmarshal(b, &p)
 }
 
 //struct2arraybytes
 func (p *Proto) struct2arraybytes() []byte {
-	b, err := json.Marshal(p)
-	p.checkError(err)
+	b, _ := json.Marshal(p)	
 	return b
 }
 
@@ -116,12 +114,14 @@ func strTrim(str string) (res string) {
 }
 
 // same /pkg
-func SqlStringMakeDTime(ostr string) string {
-	_ostr := strings.Split(ostr, "\\")
-	if len(_ostr) != 2 {
-		return ostr
-	}
-	return _ostr[0] + sqlStringMakeDTime(_ostr[1])
+func (p *Proto)sqlStringMakeDTimes(ostr string) {
+	p.body.MyConf[Proto_SQL_clientsdbcol]="select F_ID from T_Standard where F_CNTime > '2017-01-01 00:00:00'"
+	p.body.MyConf[Proto_SQL_serverdbcol]="select F_ID from iFixsvr_D3Weight where F_CNTime > '2017-01-01 00:00:00'"
+	// _ostr := strings.Split(ostr, "\\")
+	// if len(_ostr) != 2 {
+	// 	p.body.MyConf[Proto_SQL_clientsdbcol]=  ostr
+	// }
+	// p.body.MyConf[Proto_SQL_clientsdbcol]= _ostr[0] + sqlStringMakeDTime(_ostr[1])	
 }
 
 // same /pkg
@@ -144,12 +144,19 @@ func sqlStringMakeDTime(s string) string {
 
 }
 
-func sqlStringMakeRows(ostr string, col []string) string {
+func (p *Proto)sqlStringServerMakeRows(ostr string) {
+	p.body.MyConf[Proto_SQL_serverdbrows]= ostr
+}
+
+func (p *Proto)sqlStringClientsMakeRows(ostr string, col []string) {
 	_ostr := strings.Split(ostr, "\\")
 	if len(_ostr) != 2 {
-		return ostr
+		p.body.MyConf[Proto_SQL_clientsdbrows]= ostr
 	}
-	return _ostr[0] + sqlStringMakeRow(col)
+	fmt.Println(ostr)
+	fmt.Println(_ostr[0])
+	fmt.Println(sqlStringMakeRow(col))
+	p.body.MyConf[Proto_SQL_clientsdbrows]= _ostr[0] + sqlStringMakeRow(col)
 }
 
 func sqlStringMakeRow(ostr []string) (nstr string) {
@@ -188,4 +195,3 @@ func ClientStartInput() string {
 		return ClientStartInput()
 	}
 }
-
