@@ -15,12 +15,11 @@ func (c *Proto) ServerDBPing() error {
 }
 
 func (c *Proto) ServerDBExecSelectCol() (res []string, err error) {
-	c.sqlStringMakeDTimes(config[Proto_SQL_serverdbcol])
 	return mssql.DBExecSelectCol(c.MyConf[Proto_SQL_serverdbcol])
 }
 
 func (c *Proto) ServerDBExecInsertRows() (err error) {
-	c.sqlStringServerMakeRows(config[Proto_SQL_serverdbrows])
+	c.sqlStringServerMakeRows(c.MyConf[Proto_SQL_serverdbrows])
 	return mssql.DBExecInsertRows(c.MyConf[Proto_SQL_serverdbrows], c.BodyDatas)
 }
 

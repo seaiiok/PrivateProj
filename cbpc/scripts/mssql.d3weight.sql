@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[T_Standard1](
+CREATE TABLE [dbo].[iFixsvr_D3Weight](
 	[Id] [decimal](18, 0) IDENTITY(1,1) NOT NULL,
 	[F_ID] [nvarchar](50) COLLATE Chinese_PRC_CI_AS NULL,
 	[F_StdNo] [nvarchar](50) COLLATE Chinese_PRC_CI_AS NULL,

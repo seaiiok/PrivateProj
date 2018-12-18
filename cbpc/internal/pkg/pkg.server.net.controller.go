@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -13,8 +12,7 @@ func (p *Proto) serveriFixToolsController(w http.ResponseWriter, r *http.Request
 
 //内部中间件
 func (p *Proto) serveriFixToolsControllerTask(w http.ResponseWriter) {
-	p.ProcessTrace(p.header.HeadMsg[Proto_Cmd])
-	fmt.Println(p.header.ProcessTrace)
+
 	switch p.header.HeadMsg[Proto_Cmd] {
 	//客服端的任务确认
 	case Proto_Cmd_1th:
@@ -53,7 +51,6 @@ func (p *Proto) serveriFixToolsControllerTask(w http.ResponseWriter) {
 	case Proto_Cmd_4th:
 
 		col, err := p.ServerDBExecSelectCol()
-		fmt.Println(col)
 		resarr := ArrayDiff(p.body.BodyData, col)
 
 		if err != nil || len(resarr) == 0 {

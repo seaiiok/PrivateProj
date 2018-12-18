@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"fmt"
 	"ifix.cbpc/cbpc/pkg/conf"
 )
 
@@ -33,7 +32,6 @@ func ClientsConfigInit(path string) (err error) {
 
 //保存
 func ConfigSet(path string, config map[string]string) (err error) {
-	fmt.Println(config)
 	err=conf.SetConfKV(path, config)
 	return 
 }

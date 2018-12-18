@@ -7,5 +7,4 @@ import (
 
 func clientsInit() {
 	pkg.ClientsConfigInit("")
-
 }

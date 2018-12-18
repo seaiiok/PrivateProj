@@ -40,7 +40,8 @@ const (
 
 //严格的
 const (
-	Proto_Conf_ProcessTraceSum = 5
+	Proto_Conf_ProcessTraceSum = 10
+	Proto_Conf_ProcessSleep    = 5
 )
 
 //严格的
@@ -50,21 +51,22 @@ const (
 	Proto_Conf_Task_jwofflinedb   = "jwofflinedb"
 	Proto_Conf_Task_jfofflinefile = "jfofflinefile"
 	Proto_Conf_Task_jfofflinedb   = "jfofflinedb"
-	Proto_Conf_Task_unknown   = "unknown"
+	Proto_Conf_Task_unknown       = "unknown"
 	Proto_Conf_clientstask        = "clientstask"
-	
 )
 
 //严格的
 const (
-	Proto_SQL_serverdbdriver  = "serverdbdriver"
-	Proto_SQL_serverdbconn    = "serverdbconn"
-	Proto_SQL_serverdbcol     = "serverdbcol"
-	Proto_SQL_serverdbrows    = "serverdbrows"
-	Proto_SQL_clientsdbdriver = "clientsdbdriver"
-	Proto_SQL_clientsdbconn   = "clientsdbconn"
-	Proto_SQL_clientsdbcol    = "clientsdbcol"
-	Proto_SQL_clientsdbrows   = "clientsdbrows"
+	Proto_SQL_serverdbdriver      = "serverdbdriver"
+	Proto_SQL_serverdbconn        = "serverdbconn"
+	Proto_SQL_serverdbcol         = "serverdbcol"
+	Proto_SQL_serverdbrows        = "serverdbrows"
+	Proto_SQL_clientsdbdriver     = "clientsdbdriver"
+	Proto_SQL_clientsdbconn       = "clientsdbconn"
+	Proto_SQL_clientsdbcol        = "clientsdbcol"
+	Proto_SQL_clientsdbrows       = "clientsdbrows"
+	Proto_SQL_clientsfilespath    = "clientsfilespath"
+	Proto_SQL_clientsfilecreatedt = "clientsfilecreatedt"
 )
 
 //配置文件Map
@@ -83,28 +85,25 @@ const (
 	Proto_Conf_serverdbrows4jwonlinefile    = "serverdbrows4jwonlinefile"
 	Proto_Conf_clientsdbdriver4jwonlinefile = "clientsdbdriver4jwonlinefile"
 	Proto_Conf_clientsdbconn4jwonlinefile   = "clientsdbconn4jwonlinefile"
-	Proto_Conf_clientsdbcol4jwonlinefile   = "clientsdbcol4jwonlinefile"
+	Proto_Conf_clientsdbcol4jwonlinefile    = "clientsdbcol4jwonlinefile"
 	Proto_Conf_clientsdbrows4jwonlinefile   = "clientsdbrows4jwonlinefile"
 
 	Proto_Conf_serverdbcol4jwofflinedb     = "serverdbcol4jwofflinedb"
 	Proto_Conf_serverdbrows4jwofflinedb    = "serverdbrows4jwofflinedb"
 	Proto_Conf_clientsdbdriver4jwofflinedb = "clientsdbdriver4jwofflinedb"
 	Proto_Conf_clientsdbconn4jwofflinedb   = "clientsdbconn4jwofflinedb"
-	Proto_Conf_clientsdbcol4jwofflinedb   = "clientsdbcol4jwofflinedb"
+	Proto_Conf_clientsdbcol4jwofflinedb    = "clientsdbcol4jwofflinedb"
 	Proto_Conf_clientsdbrows4jwofflinedb   = "clientsdbrows4jwofflinedb"
 
-	Proto_Conf_serverdbcol4jfofflinefile     = "serverdbcol4jfofflinefile"
-	Proto_Conf_serverdbrows4jfofflinefile    = "serverdbrows4jfofflinefile"
-	Proto_Conf_clientsdbdriver4jfofflinefile = "clientsdbdriver4jfofflinefile"
-	Proto_Conf_clientsdbconn4jfofflinefile   = "clientsdbconn4jfofflinefile"
-	Proto_Conf_clientsdbcol4jfofflinefile   = "clientsdbcol4jfofflinefile"
-	Proto_Conf_clientsdbrows4jfofflinefile   = "clientsdbrows4jfofflinefile"
+	Proto_Conf_serverdbcol4jfofflinefile       = "serverdbcol4jfofflinefile"
+	Proto_Conf_serverdbrows4jfofflinefile      = "serverdbrows4jfofflinefile"
+	Proto_Conf_clientsfilespath4jfofflinefile  = "clientsfilespath4jfofflinefile"
+	Proto_Conf_clientsfilecreatedt4jfofflinefile = "clientsfilecreatedt4jfofflinefile"
 
 	Proto_Conf_serverdbcol4jfofflinedb     = "serverdbcol4jfofflinedb"
 	Proto_Conf_serverdbrows4jfofflinedb    = "serverdbrows4jfofflinedb"
 	Proto_Conf_clientsdbdriver4jfofflinedb = "clientsdbdriver4jfofflinedb"
 	Proto_Conf_clientsdbconn4jfofflinedb   = "clientsdbconn4jfofflinedb"
-	Proto_Conf_clientsdbcol4jfofflinedb   = "clientsdbcol4jfofflinedb"
+	Proto_Conf_clientsdbcol4jfofflinedb    = "clientsdbcol4jfofflinedb"
 	Proto_Conf_clientsdbrows4jfofflinedb   = "clientsdbrows4jfofflinedb"
-
 )

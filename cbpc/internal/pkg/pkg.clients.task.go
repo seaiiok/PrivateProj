@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"fmt"
 	"errors"
 )
 
@@ -14,7 +13,9 @@ func (p *Proto) GetClientsConf() error {
 	case Proto_Conf_Task_d3weight:
 		c := new(clientsd3weight)
 		c.clients.MyConf = p.body.MyConf
-		fmt.Println(c.clients.MyConf)
+		for k, v := range p.body.MyConf {
+			config[k] = v
+		}
 		iProducte = c
 		err := iProducte.ClientsProducterGetReady()
 		if err != nil {
@@ -27,7 +28,16 @@ func (p *Proto) GetClientsConf() error {
 	case Proto_Conf_Task_jfofflinedb:
 
 	case Proto_Conf_Task_jfofflinefile:
-
+		c := new(clientsd3weight)
+		c.clients.MyConf = p.body.MyConf
+		for k, v := range p.body.MyConf {
+			config[k] = v
+		}
+		iProducte = c
+		err := iProducte.ClientsProducterGetReady()
+		if err != nil {
+			p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Restart
+		}
 	default:
 
 		p.header.HeadMsg[Proto_Cmd] = Proto_Cmd_Restart
@@ -42,21 +52,20 @@ func (p *Proto) GetClientsCol() error {
 
 	switch p.header.HeadMsg[Proto_Conf_clientstask] {
 	case Proto_Conf_Task_d3weight:
-		p.sqlStringMakeDTimes(config[Proto_SQL_clientsdbcol])
+		p.sqlStringMakeClientsDTimes(config[Proto_SQL_clientsdbcol])
 		c := new(clientsd3weight)
-		c.clients.MyConf=make(map[string]string)
+		c.clients.MyConf = make(map[string]string)
 		c.clients.MyConf = p.body.MyConf
 		iProducte = c
 		p.body.BodyData = make([]string, 0)
-		res:=iProducte.ClientsProducterGetData()
-		if len(res)>0 {
+		res := iProducte.ClientsProducterGetData()
+		if len(res) > 0 {
 			for i := 0; i < len(res); i++ {
-				p.body.BodyData=append(p.body.BodyData,res[i])	
+				p.body.BodyData = append(p.body.BodyData, res[i])
 			}
-			
+
 		}
-		fmt.Println("res:",p.body.BodyData)
-		
+
 	case Proto_Conf_Task_jwofflinedb:
 
 	case Proto_Conf_Task_jwonlinefile:
@@ -79,12 +88,12 @@ func (p *Proto) GetClientsRows() error {
 
 	switch p.header.HeadMsg[Proto_Conf_clientstask] {
 	case Proto_Conf_Task_d3weight:
-		fmt.Println(config[Proto_SQL_clientsdbrows])
+
 		p.sqlStringClientsMakeRows(config[Proto_SQL_clientsdbrows], p.body.BodyData)
 
 		c := new(clientsd3weight)
 		c.clients.MyConf = p.body.MyConf
-		fmt.Println(c.clients.MyConf[Proto_SQL_clientsdbrows])
+
 		iProducte = c
 
 		res := iProducte.ClientsProducterGetDatas()

@@ -11,7 +11,8 @@ func (p *Proto) GetServerConf() error {
 		p.body.MyConf = make(map[string]string, 0)
 		p.body.MyConf[Proto_SQL_serverdbdriver] = config[Proto_Conf_serverdbdriver]
 		p.body.MyConf[Proto_SQL_serverdbconn] = config[Proto_Conf_serverdbconn]
-		p.body.MyConf[Proto_SQL_serverdbcol] = config[Proto_Conf_serverdbcol4d3weight]
+		// p.body.MyConf[Proto_SQL_serverdbcol] 
+		p.sqlStringMakeServerDTimes(config[Proto_Conf_serverdbcol4d3weight])
 		p.body.MyConf[Proto_SQL_serverdbrows] = config[Proto_Conf_serverdbrows4d3weight]
 		p.body.MyConf[Proto_SQL_clientsdbdriver] = config[Proto_Conf_clientsdbdriver4d3weight]
 		p.body.MyConf[Proto_SQL_clientsdbconn] = config[Proto_Conf_clientsdbconn4d3weight]
@@ -60,10 +61,9 @@ func (p *Proto) GetServerConf() error {
 		p.body.MyConf[Proto_SQL_serverdbconn] = config[Proto_Conf_serverdbconn]
 		p.body.MyConf[Proto_SQL_serverdbcol] = config[Proto_Conf_serverdbcol4jfofflinefile]
 		p.body.MyConf[Proto_SQL_serverdbrows] = config[Proto_Conf_serverdbrows4jfofflinefile]
-		p.body.MyConf[Proto_SQL_clientsdbdriver] = config[Proto_Conf_clientsdbdriver4jfofflinefile]
-		p.body.MyConf[Proto_SQL_clientsdbconn] = config[Proto_Conf_clientsdbconn4jfofflinefile]
-		p.body.MyConf[Proto_SQL_clientsdbcol] = config[Proto_Conf_clientsdbcol4jfofflinefile]
-		p.body.MyConf[Proto_SQL_clientsdbrows] = config[Proto_Conf_clientsdbrows4jfofflinefile]
+		p.body.MyConf[Proto_SQL_clientsfilespath] = config[Proto_Conf_clientsfilespath4jfofflinefile]
+		p.body.MyConf[Proto_SQL_clientsfilecreatedt] = config[Proto_Conf_clientsfilecreatedt4jfofflinefile]
+
 
 	default:
 
