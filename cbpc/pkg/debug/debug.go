@@ -1,52 +1,53 @@
 package main
 
 import (
+	"archive/zip"
+	"bufio"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"os"
 )
 
 func main() {
-	// GetAllFile1th("D:\\FTP\\offline\\ABC")
-	// fileslist=make([]string,0)
-	// err:=GetAllFile("D:\\FTP\\offline\\ABC")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// for i := 0; i < len(fileslist); i++ {
-	// 	fmt.Println(fileslist[i])
-	// }
-	path:="D:\\FTP\\offline\\ABC"
-	f:=GetAllFiles(path)
-	fl,_:=f(path)
-	for i := 0; i < len(fl); i++ {
-		fmt.Println(fl[i])
-	}
+	path := "D://FTP//offline//ABC//2017//A002//KNR04886_012_1.zip"
+	f := ReadZipLines(path)
+	fmt.Println(f)
 }
 
-// func GetAllFile(pathname string) ([]string,error) {
-// 	rd, err := ioutil.ReadDir(pathname)
-// 	for _, fi := range rd {
-// 		if fi.IsDir() {
-// 			GetAllFile(pathname +"\\"+ fi.Name(),fileslist)
-// 		} else {
-// 			fileslist=append(fileslist,pathname +"\\"+ fi.Name())
-// 		}	
-// 	}
-// 	return
-// }
-type fc func(string)([]string,error)
-func GetAllFiles(pathname string) (f fc) {
-	fileslist:=make([]string,0)
-	f=func (pathname string) ([]string,error) {
-		rd, err := ioutil.ReadDir(pathname)
-		for _, fi := range rd {
-			if fi.IsDir() {
-				f(pathname +"\\"+ fi.Name())
-			} else {
-				fileslist=append(fileslist,pathname +"\\"+ fi.Name())
-			}	
-		}
-		return fileslist,err
+func PathExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
 	}
-	return f
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
+func ReadZipLines(path string) (res []string) {
+	res = make([]string, 0)
+	b,_:=PathExists(path)
+	if b !=true {
+		return res
+	}
+	rc, err := zip.OpenReader(path)
+
+	if err != nil {
+		defer rc.Close()
+	}
+
+	for _, _file := range rc.File {
+		f, _ := _file.Open()
+		rd := bufio.NewReader(f)
+		for {
+			line, err := rd.ReadString('\n')
+			if err != nil || io.EOF == err {
+				break
+			}
+			res = append(res, line)
+		}
+		defer f.Close()
+	}
+	return
 }
