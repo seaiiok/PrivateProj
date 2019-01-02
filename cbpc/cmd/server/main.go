@@ -1,12 +1,10 @@
 package main
 
 import (
-	//	"time"
-
-	"ifix.cbpc/cbpc/internal/app/server"
-	//	"ifix.cbpc/cbpc/pkg/print"
+	"ifix.cbpc/cbpc/internal/app/server.app"
 )
 
 func main() {
-	server.ServiceStart()
+	app.ServiceStart()
 }
+

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"ifix.cbpc/cbpc/internal/app/clients"
+	"ifix.cbpc/cbpc/internal/app/clients.app"
 )
 
 func main() {
-	clients.ServiceStart()
-	select{}
+	app.ServiceStart()
+	select {}
 }
