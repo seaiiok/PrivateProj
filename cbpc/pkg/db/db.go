@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 	"reflect"
 	"sync"
 
@@ -14,24 +13,25 @@ type DB struct {
 	DriverName     string
 	DataSourceName string
 	sqlstr         string
-	db             *sql.DB
-	once           sync.Once
 }
+
+var msdb *sql.DB
+var once sync.Once
 
 //Init mssql driver init
 func (me *DB) Init() (err error) {
 	// if me.db.Ping() == nil {
 	// 	return nil
 	// }
-	me.once.Do(func() {
-		me.db, err = sql.Open(me.DriverName, me.DataSourceName)
+	once.Do(func() {
+		msdb, err = sql.Open(me.DriverName, me.DataSourceName)
 	})
-	return me.db.Ping()
+	return msdb.Ping()
 }
 
 // Exec general
 func (me *DB) Exec(constr string) error {
-	stmt, err := me.db.Prepare(constr)
+	stmt, err := msdb.Prepare(constr)
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func (me *DB) Exec(constr string) error {
 // Query  should query one col or panic
 func (me *DB) Query(constr string) (res []string, err error) {
 	res = make([]string, 0)
-	stmt, err := me.db.Prepare(constr)
+	stmt, err := msdb.Prepare(constr)
 	if err != nil {
 		return
 	}
@@ -72,7 +72,7 @@ func (me *DB) Query(constr string) (res []string, err error) {
 // Querys  query more
 func (me *DB) Querys(constr string) (res [][]string, err error) {
 	res = make([][]string, 0)
-	stmt, err := me.db.Prepare(constr)
+	stmt, err := msdb.Prepare(constr)
 	if err != nil {
 		return
 	}
@@ -107,7 +107,7 @@ func (me *DB) Querys(constr string) (res [][]string, err error) {
 //Querys2Map only query like key value
 func (me *DB) Querys2Map(constr string) (res map[string]string, err error) {
 	res = make(map[string]string, 0)
-	stmt, err := me.db.Prepare(constr)
+	stmt, err := msdb.Prepare(constr)
 	if err != nil {
 		return
 	}
@@ -141,22 +141,21 @@ func (me *DB) Querys2Map(constr string) (res map[string]string, err error) {
 
 //Insert insert one row
 func (me *DB) Insert(constr string, res []string) (err error) {
-	conn, err := me.db.Begin()
+	conn, err := msdb.Begin()
 	re := make([]interface{}, len(res))
 	for i := 0; i < len(res); i++ {
 		re[i] = res[i]
 	}
-	stmt, err := me.db.Prepare(constr)
+	stmt, err := msdb.Prepare(constr)
 	if err != nil {
 		return
 	}
 	defer stmt.Close()
-	rows, err := stmt.Exec(re...)
+	_, err = stmt.Exec(re...)
 	if err != nil {
 		conn.Rollback()
 		return
 	}
-	fmt.Println(rows)
 	conn.Commit()
 	defer stmt.Close()
 	return
@@ -164,24 +163,22 @@ func (me *DB) Insert(constr string, res []string) (err error) {
 
 //Inserts insert more rows
 func (me *DB) Inserts(constr string, res [][]string) (err error) {
-	conn, err := me.db.Begin()
+	conn, err := msdb.Begin()
 
 	for c := 0; c < len(res); c++ {
 		re := make([]interface{}, len(res[c]))
 		for i := 0; i < len(res[c]); i++ {
 			re[i] = res[c][i]
 		}
-		stmt, err := me.db.Prepare(constr)
-		if err != nil {
-			fmt.Println(err)
-		}
-		defer stmt.Close()
-		rows, err := stmt.Exec(re...)
+		stmt, _ := msdb.Prepare(constr)
 		if err != nil {
 			conn.Rollback()
-			fmt.Println(err)
 		}
-		fmt.Println(rows)
+		defer stmt.Close()
+		_, err := stmt.Exec(re...)
+		if err != nil {
+			conn.Rollback()
+		}
 		defer stmt.Close()
 	}
 	conn.Commit()

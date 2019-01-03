@@ -1,35 +1,35 @@
 package net
 
 import (
-	"net/http"
+	"errors"
+	"time"
 
-	"ifix.cbpc/cbpc/api/server.api"
+	"ifix.cbpc/cbpc/api/clients.api"
 	"ifix.cbpc/cbpc/pkg/conf"
 	"ifix.cbpc/cbpc/pkg/protocol"
 )
 
 // MidController ...
-func MidController(w http.ResponseWriter, p *protocol.Protocol) {
-
+func MidController(p *protocol.Protocol) {
 	switch p.MeConf[conf.ConstReqID] {
-		
+
 	case conf.ConstReqID1th:
-		midController1th(w, p)
+		midController1th(p)
 
 	case conf.ConstReqID2th:
-		midController2th(w, p)
+		midController2th(p)
 
 	case conf.ConstReqID3th:
-		midController2th(w, p)
+		midController3th(p)
 
 	case conf.ConstReqID4th:
-		midController4th(w, p)
+		midController4th(p)
 
 	case conf.ConstReqID5th:
-		midController5th(w, p)
+		midController5th(p)
 
 	case conf.ConstReqID6th:
-		midController6th(w, p)
+		midController6th(p)
 
 	default:
 
@@ -38,57 +38,67 @@ func MidController(w http.ResponseWriter, p *protocol.Protocol) {
 }
 
 // midController1th ...
-func midController1th(w http.ResponseWriter, p *protocol.Protocol) {
-	midController1thCom(w, p)
+func midController1th(p *protocol.Protocol) {
+	if p.Error != nil {
+		clientconf := make(map[string]string, 0)
+		clientconf[conf.ConstServerAddr] = p.MeConf[conf.ConstServerAddr]
+		clientconf[conf.ConstServerPort] = p.MeConf[conf.ConstServerPort]
+		clientconf[conf.ConstClientsTask] = p.MeConf[conf.ConstClientsTask]
+		p.Error = conf.SetConf("ifixtools.conf", clientconf)
+	}
+
 }
 
 // midController2th ...
-func midController2th(w http.ResponseWriter, p *protocol.Protocol) {
-	midController2thCom(w, p)
+func midController2th(p *protocol.Protocol) {
+	switch p.MeConf[conf.ConstClientsTask] {
+	case conf.ConstClientsTaskD3weight:
+		cli := new(api.Empty)
+		cli.DriverName = p.MeConf[conf.ConstClientsD3WeightDriverName]
+		cli.DataSourceName = p.MeConf[conf.ConstClientsD3WeightDataSourceName]
+		var c api.Producer = cli
+		p.Error = api.GetProducerPing(c)
+
+	case conf.ConstClientsTaskOnlineLog:
+	default:
+	}
 }
 
 // midController3th ...
-func midController3th(w http.ResponseWriter, p *protocol.Protocol) {
+func midController3th(p *protocol.Protocol) {
 
 	switch p.MeConf[conf.ConstClientsTask] {
 	case conf.ConstClientsTaskD3weight:
 		cli := new(api.D3Weight)
-		cli.SqlSelectCols = conf.Config[conf.ConstServerD3WeightCols]
-		var c api.Consumer = cli
-		err := api.GetConsumerKeys(c)
+		cli.SqlSelectCols = p.MeConf[conf.ConstClientsD3WeightCols]
+		var c api.Producer = cli
+		p.Error = api.GetProducerKeys(c)
 		p.Data = cli.Cols
-
-		midController3thCom(w, p, err)
 
 	case conf.ConstClientsTaskOnlineLog:
-		cli := new(api.OnlineLog)
-		cli.SqlSelectCols = conf.Config[conf.ConstServerOnlineLogCols]
-		var c api.Consumer = cli
-		err := api.GetConsumerKeys(c)
-		p.Data = cli.Cols
-
-		midController3thCom(w, p, err)
 
 	default:
 
 	}
+
 }
 
 // midController4th ...
-func midController4th(w http.ResponseWriter, p *protocol.Protocol) {
+func midController4th(p *protocol.Protocol) {
 
 	switch p.MeConf[conf.ConstClientsTask] {
 	case conf.ConstClientsTaskD3weight:
 		cli := new(api.D3Weight)
-		cli.SqlInsertsRows = conf.Config[conf.ConstServerD3WeightRows]
-		var c api.Consumer = cli
-		midController4thCom(w, p, c)
 
+		cli.SqlSelectRows = midController4thCom(p)
+		if cli.SqlSelectRows == "" {
+			p.Error = errors.New("nothing datas")
+			return
+		}
+		var c api.Producer = cli
+		p.Error = api.GetProducerRows(c)
+		p.Datas = cli.Rows
 	case conf.ConstClientsTaskOnlineLog:
-		cli := new(api.OnlineLog)
-		cli.SqlInsertsRows = conf.Config[conf.ConstServerOnlineLogRows]
-		var c api.Consumer = cli
-		midController4thCom(w, p, c)
 
 	default:
 
@@ -96,23 +106,12 @@ func midController4th(w http.ResponseWriter, p *protocol.Protocol) {
 }
 
 // midController5th ...
-func midController5th(w http.ResponseWriter, p *protocol.Protocol) {
-
-	switch p.MeConf[conf.ConstClientsTask] {
-	case conf.ConstClientsTaskD3weight:
-	case conf.ConstClientsTaskOnlineLog:
-	default:
-
-	}
+func midController5th(p *protocol.Protocol) {
+	time.Sleep(conf.ConstWaitTime * time.Second)
 }
 
 // midController6th ...
-func midController6th(w http.ResponseWriter, p *protocol.Protocol) {
+func midController6th(p *protocol.Protocol) {
+	time.Sleep(conf.ConstWaitTime * time.Second)
 
-	switch p.MeConf[conf.ConstClientsTask] {
-	case conf.ConstClientsTaskD3weight:
-	case conf.ConstClientsTaskOnlineLog:
-	default:
-
-	}
 }

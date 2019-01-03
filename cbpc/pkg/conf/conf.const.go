@@ -8,9 +8,8 @@ const (
 
 //system use
 const (
-	ConstServerAddr = "192.168.1.7"
-	ConstServerPort = "494"
 	ConstHTTPMethod = "POST"
+	ConstWaitTime=5
 )
 
 //client work id
@@ -30,13 +29,24 @@ const (
 
 //client config
 const (
-	ConstClientsTask  = "clientstask"
-
+	ConstServerAddr  = "serveraddr"
+	ConstServerPort  = "serverport"
 	ConstServerDriverName  = "serverdbdriver"
 	ConstServerDataSourceName  = "serverdbconn"
 
 	ConstServerD3WeightCols  = "serverdbcol4d3weight"
 	ConstServerD3WeightRows  = "serverdbrows4d3weight"
+	ConstServerOfflineZipCols  = "serverdbcol4offlinezip"
+	ConstServerOfflineZipRows  = "serverdbrows4offlinezip"
 	ConstServerOnlineLogCols  = "serverdbcol4onlinelog"
 	ConstServerOnlineLogRows  = "serverdbrows4onlinelog"
+
+	ConstClientsTask  = "clientstask"
+
+	ConstClientsD3WeightDriverName  = "clientsd3weightdbdriver"
+	ConstClientsD3WeightDataSourceName  = "clientsd3weightdbconn"
+	ConstClientsD3WeightCols  = "clientsdbcol4d3weight"
+	ConstClientsD3WeightRows  = "clientsdbrows4d3weight"
+	ConstClientsOnlineLogCols  = "clientsdbcol4onlinelog"
+	ConstClientsOnlineLogRows  = "clientsdbrows4onlinelog"
 )

@@ -1,57 +1,66 @@
 package net
 
 import (
-	"net/http"
+	"errors"
+	"fmt"
 
-	"ifix.cbpc/cbpc/api/server.api"
 	"ifix.cbpc/cbpc/pkg/conf"
-	"ifix.cbpc/cbpc/pkg/convert"
+	"ifix.cbpc/cbpc/pkg/print"
 	"ifix.cbpc/cbpc/pkg/protocol"
 )
 
-func midController1thCom(w http.ResponseWriter, p *protocol.Protocol) {
-	for k, v := range conf.Config {
-		p.MeConf[k] = v
-	}
+func midController1thCom(p *protocol.Protocol) {
 
-	p.MeConf[conf.ConstReqID] = conf.ConstReqID2th
-	b, err := convert.Struct2Arraybytes(p)
-	if err != nil {
-		p.MeConf[conf.ConstReqID] = conf.ConstReqID6th
-	}
-	w.Write(b)
 }
 
-func midController2thCom(w http.ResponseWriter, p *protocol.Protocol) {
-	cli := new(api.Empty)
-	cli.DriverName = conf.Config[conf.ConstServerDriverName]
-	cli.DataSourceName = conf.Config[conf.ConstServerDataSourceName]
-	var c api.Consumer = cli
-	err := api.GetConsumerPing(c)
+func midController2thCom(p *protocol.Protocol) {
 
-	p.MeConf[conf.ConstReqID] = conf.ConstReqID3th
-	b, err := convert.Struct2Arraybytes(p)
-	if err != nil {
-		p.MeConf[conf.ConstReqID] = conf.ConstReqID6th
-	}
-	w.Write(b)
 }
 
-func midController3thCom(w http.ResponseWriter, p *protocol.Protocol, err error) {
-	p.MeConf[conf.ConstReqID] = conf.ConstReqID4th
-	b, err := convert.Struct2Arraybytes(p)
-	if err != nil {
-		p.MeConf[conf.ConstReqID] = conf.ConstReqID6th
-	}
-	w.Write(b)
+func midController3thCom(p *protocol.Protocol) {
+
 }
 
-func midController4thCom(w http.ResponseWriter, p *protocol.Protocol, c api.Consumer) {
-	err := api.SetConsumerRows(c)
-	p.MeConf[conf.ConstReqID] = conf.ConstReqID5th
-	b, err := convert.Struct2Arraybytes(p)
-	if err != nil {
-		p.MeConf[conf.ConstReqID] = conf.ConstReqID6th
+func midController4thCom(p *protocol.Protocol) string {
+	sqlstr := ""
+	for i := 0; i < len(p.Data); i++ {
+		sqlstr = sqlstr + "'" + p.Data[i] + "',"
 	}
-	w.Write(b)
+	if sqlstr == "" {
+		p.Error = errors.New("nothing data")
+		return sqlstr
+	}
+
+	sqlstr = sqlstr[:len(sqlstr)-1]
+	sqlstr = p.MeConf[conf.ConstClientsD3WeightRows] + " and F_ID in (" + sqlstr + ")"
+
+	return sqlstr
+}
+
+func midController5thCom(p *protocol.Protocol) {
+
+}
+
+//GetMeTask ...
+func GetMeTask(p *protocol.Protocol) {
+	p.MeConf[conf.ConstClientsTask] = conf.Config[conf.ConstClientsTask]
+	if p.MeConf[conf.ConstClientsTask] == "unkown" || p.MeConf[conf.ConstClientsTask] == "" {
+		p.MeConf[conf.ConstClientsTask]= "unkown"
+	}
+}
+
+type Usage struct {
+	tip string
+	key string
+}
+
+func (u *Usage) UserScanln() {
+	u.tip = `请选择一个作业(数字)
+1:3#门车辆称重系统  2:在线清数日志  3:检封离线压缩包  4:空调集中辅助`
+	print.Line(print.Warn, u.tip)
+	fmt.Scanln(&u.key)
+	print.Line(print.Ok, "你选择了:"+u.key)
+	if u.key != "1" && u.key != "2" && u.key != "3" && u.key != "4" {
+		u.UserScanln()
+	}
 }

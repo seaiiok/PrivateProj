@@ -32,6 +32,7 @@ func (p *Protocol) SetProcessTrace(str ...string) {
 	}
 	if s != "" {
 		p.ProcessTrace = append(p.ProcessTrace, s)
+		return
 	}
 	pc, _, _, _ := runtime.Caller(1)
 	fname := runtime.FuncForPC(pc).Name()
