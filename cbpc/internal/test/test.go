@@ -1,30 +1,64 @@
 package main
-
+ 
 import (
-
-	"fmt"
-
-	"ifix.cbpc/cbpc/api/server.api"
-	 "ifix.cbpc/cbpc/pkg/conf"
+  "fmt"
+  "reflect"
 )
+ 
+type Injector struct {
+  mappers map[reflect.Type]reflect.Value
+}
+ 
+func (inj *Injector) Set(value interface{}) {
+  inj.mappers[reflect.TypeOf(value)] = reflect.ValueOf(value)
+}
+ 
+func (inj *Injector) Get(t reflect.Type) reflect.Value {
+  return inj.mappers[t]
+}
+ 
+func (inj *Injector) Invoke(i interface{}) []reflect.Value {
+  t := reflect.TypeOf(i)
+  if t.Kind() != reflect.Func {
+	return nil
+  }
+  inValues := make([]reflect.Value, t.NumIn())
+  for k := 0; k < t.NumIn(); k++ {
+    inValues[k] = inj.Get(t.In(k))
+  }
+  ret := reflect.ValueOf(i).Call(inValues)
+  return ret
+}
+ 
+func New() *Injector {
+  return &Injector{make(map[reflect.Type]reflect.Value)}
+}
+ 
+func Container(f interface{}) { 
+  inj.Invoke(f) 
+}
+ 
+func Dependency(b []string) {
+  fmt.Println("exsql: ", b)
+}
 
+func HI(b string) {
+	fmt.Println("heeo: ", b)
+  }
+ 
+var inj *Injector
+ 
 func main() {
+  inj = New()
+  b:=[]string{"a","b"}
+  inj.Set(b)
+
+ 
+  d := Dependency
+  Container(d)
 
 
-	cli1 := new(api.D3Weight)
-	cli1.DriverName = conf.Config[conf.ConstServerDriverName]
-	cli1.DataSourceName = conf.Config[conf.ConstServerDataSourceName]
-	var c1 api.Consumer = cli1
-	fmt.Println(cli1)
-	err := api.GetConsumerPing(c1)
-	fmt.Println(err)
-	
-	cli2 := cli1
-	cli2.SqlSelectCols = conf.Config[conf.ConstServerD3WeightCols]
-	var c2 api.Consumer = cli2
-	fmt.Println(cli2.SqlSelectCols)
-	err = api.GetConsumerKeys(c2)
-	fmt.Println(err)
-	fmt.Println(c2)
+  inj.Set("b1")
+  Container(HI)
 
 }

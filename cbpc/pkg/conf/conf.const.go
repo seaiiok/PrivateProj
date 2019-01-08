@@ -2,51 +2,58 @@ package conf
 
 //client task
 const (
-	ConstClientsTaskD3weight  = "ClientsTaskD3weight"
-	ConstClientsTaskOnlineLog = "ClientsTaskOnlineLog"
+	ConstTaskD3Weight   = "ClientsTaskD3weight"
+	ConstTaskOnlineLog  = "ClientsTaskOnlineLog"
+	ConstTaskOfflineZip = "ClientsTaskOfflineZip"
 )
 
 //system use
 const (
 	ConstHTTPMethod = "POST"
-	ConstWaitTime=5
+	ConstWaitTime   = 5
 )
 
 //client work id
 const (
-	ConstReqID  = "ClientsID"
+	ConstReqID = "ClientsID"
 )
 
 //client work id
 const (
-	ConstReqID1th  = "第1步"
-	ConstReqID2th  = "第2步"
-	ConstReqID3th  = "第3步"
-	ConstReqID4th  = "第4步"
-	ConstReqID5th  = "第5步"
-	ConstReqID6th  = "第6步"
+	ConstReqID1th = "第1步"
+	ConstReqID2th = "第2步"
+	ConstReqID3th = "第3步"
+	ConstReqID4th = "第4步"
+	ConstReqID5th = "第5步"
+	ConstReqID6th = "第6步"
 )
 
 //client config
 const (
-	ConstServerAddr  = "serveraddr"
-	ConstServerPort  = "serverport"
-	ConstServerDriverName  = "serverdbdriver"
-	ConstServerDataSourceName  = "serverdbconn"
+	ConstServerAddr     = "serveraddr"
+	ConstServerPort     = "serverport"
+	ConstDBServerDriver = "dbserverdriver"
+	ConstDBServerSource = "dbserversource"
+	ConstClientsTask    = "clientstask"
 
-	ConstServerD3WeightCols  = "serverdbcol4d3weight"
-	ConstServerD3WeightRows  = "serverdbrows4d3weight"
-	ConstServerOfflineZipCols  = "serverdbcol4offlinezip"
-	ConstServerOfflineZipRows  = "serverdbrows4offlinezip"
-	ConstServerOnlineLogCols  = "serverdbcol4onlinelog"
-	ConstServerOnlineLogRows  = "serverdbrows4onlinelog"
+	ConstD3WeightClientsDriver = "d3weightclientsdriver"
+	ConstD3WeightClientsSource = "d3weightclientssource"
+	ConstD3WeightServerKeys    = "d3weightserverkeys"
+	ConstD3WeightServerData    = "d3weightserverdata"
+	ConstD3WeightClientsKeys   = "d3weightclientskeys"
+	ConstD3WeightClientsData   = "d3weightclientsdata"
 
-	ConstClientsTask  = "clientstask"
+	ConstOfflineZipClientsDriver = "offlinezipclientsdriver"
+	ConstOfflineZipClientsSource = "offlinezipclientssource"
+	ConstOfflineZipServerKeys    = "offlinezipserverkeys"
+	ConstOfflineZipServerData    = "offlinezipserverdata"
+	ConstOfflineZipClientsKeys   = "offlinezipclientskeys"
+	ConstOfflineZipClientsData   = "offlinezipclientsdata"
 
-	ConstClientsD3WeightDriverName  = "clientsd3weightdbdriver"
-	ConstClientsD3WeightDataSourceName  = "clientsd3weightdbconn"
-	ConstClientsD3WeightCols  = "clientsdbcol4d3weight"
-	ConstClientsD3WeightRows  = "clientsdbrows4d3weight"
-	ConstClientsOnlineLogCols  = "clientsdbcol4onlinelog"
-	ConstClientsOnlineLogRows  = "clientsdbrows4onlinelog"
+	ConstOnlineLogClientsDriver = "onlinelogclientsdriver"
+	ConstOnlineLogClientsSource = "onlinelogclientssource"
+	ConstOnlineLogServerKeys    = "onlinelogserverkeys"
+	ConstOnlineLogServerData    = "onlinelogserverdata"
+	ConstOnlineLogClientsKeys   = "onlinelogclientskeys"
+	ConstOnlineLogClientsData   = "onlinelogclientsdata"
 )

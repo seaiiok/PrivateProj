@@ -8,29 +8,22 @@ import (
 	_ "github.com/alexbrainman/odbc" // mssql odbc driver
 )
 
-//DB sql struct
-type DB struct {
-	DriverName     string
-	DataSourceName string
-	sqlstr         string
-}
-
 var msdb *sql.DB
 var once sync.Once
 
 //Init mssql driver init
-func (me *DB) Init() (err error) {
+func Init(drivername, datasourcename string) (err error) {
 	// if me.db.Ping() == nil {
 	// 	return nil
 	// }
 	once.Do(func() {
-		msdb, err = sql.Open(me.DriverName, me.DataSourceName)
+		msdb, err = sql.Open(drivername, datasourcename)
 	})
 	return msdb.Ping()
 }
 
 // Exec general
-func (me *DB) Exec(constr string) error {
+func Exec(constr string) error {
 	stmt, err := msdb.Prepare(constr)
 	if err != nil {
 		return err
@@ -44,7 +37,7 @@ func (me *DB) Exec(constr string) error {
 }
 
 // Query  should query one col or panic
-func (me *DB) Query(constr string) (res []string, err error) {
+func Query(constr string) (res []string, err error) {
 	res = make([]string, 0)
 	stmt, err := msdb.Prepare(constr)
 	if err != nil {
@@ -70,7 +63,7 @@ func (me *DB) Query(constr string) (res []string, err error) {
 }
 
 // Querys  query more
-func (me *DB) Querys(constr string) (res [][]string, err error) {
+func Querys(constr string) (res [][]string, err error) {
 	res = make([][]string, 0)
 	stmt, err := msdb.Prepare(constr)
 	if err != nil {
@@ -105,7 +98,7 @@ func (me *DB) Querys(constr string) (res [][]string, err error) {
 }
 
 //Querys2Map only query like key value
-func (me *DB) Querys2Map(constr string) (res map[string]string, err error) {
+func Querys2Map(constr string) (res map[string]string, err error) {
 	res = make(map[string]string, 0)
 	stmt, err := msdb.Prepare(constr)
 	if err != nil {
@@ -140,7 +133,7 @@ func (me *DB) Querys2Map(constr string) (res map[string]string, err error) {
 }
 
 //Insert insert one row
-func (me *DB) Insert(constr string, res []string) (err error) {
+func Insert(constr string, res []string) (err error) {
 	conn, err := msdb.Begin()
 	re := make([]interface{}, len(res))
 	for i := 0; i < len(res); i++ {
@@ -162,7 +155,7 @@ func (me *DB) Insert(constr string, res []string) (err error) {
 }
 
 //Inserts insert more rows
-func (me *DB) Inserts(constr string, res [][]string) (err error) {
+func Inserts(constr string, res [][]string) (err error) {
 	conn, err := msdb.Begin()
 
 	for c := 0; c < len(res); c++ {
