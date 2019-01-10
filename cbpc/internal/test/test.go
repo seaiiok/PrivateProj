@@ -1,64 +1,26 @@
 package main
- 
+
 import (
-  "fmt"
-  "reflect"
+	"encoding/json"
+	"fmt"
 )
- 
-type Injector struct {
-  mappers map[reflect.Type]reflect.Value
-}
- 
-func (inj *Injector) Set(value interface{}) {
-  inj.mappers[reflect.TypeOf(value)] = reflect.ValueOf(value)
-}
- 
-func (inj *Injector) Get(t reflect.Type) reflect.Value {
-  return inj.mappers[t]
-}
- 
-func (inj *Injector) Invoke(i interface{}) []reflect.Value {
-  t := reflect.TypeOf(i)
-  if t.Kind() != reflect.Func {
-	return nil
-  }
-  inValues := make([]reflect.Value, t.NumIn())
-  for k := 0; k < t.NumIn(); k++ {
-    inValues[k] = inj.Get(t.In(k))
-  }
-  ret := reflect.ValueOf(i).Call(inValues)
-  return ret
-}
- 
-func New() *Injector {
-  return &Injector{make(map[reflect.Type]reflect.Value)}
-}
- 
-func Container(f interface{}) { 
-  inj.Invoke(f) 
-}
- 
-func Dependency(b []string) {
-  fmt.Println("exsql: ", b)
+
+type HI struct {
+	Error bool
+	Name  string
 }
 
-func HI(b string) {
-	fmt.Println("heeo: ", b)
-  }
- 
-var inj *Injector
- 
 func main() {
-  inj = New()
-  b:=[]string{"a","b"}
-  inj.Set(b)
+	h := new(HI)
+	h.Error = false
+	h.Name = "Tom"
 
- 
-  d := Dependency
-  Container(d)
+	b, err := json.Marshal(h)
+	fmt.Println(err)
+	fmt.Println(b)
 
-
-  inj.Set("b1")
-  Container(HI)
-
+	g := new(HI)
+	err = json.Unmarshal(b, g)
+	fmt.Println(err)
+	fmt.Println(g)
 }

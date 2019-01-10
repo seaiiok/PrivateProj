@@ -1,13 +1,13 @@
-package net
+package app
 
 import (
 	"crypto/tls"
 	"net/http"
 	"reflect"
 
-	"ifix.cbpc/cbpc/interfaces"
 	"ifix.cbpc/cbpc/pkg/conf"
 	"ifix.cbpc/cbpc/pkg/convert"
+	"ifix.cbpc/cbpc/pkg/interfaces"
 )
 
 var client *http.Client
@@ -20,12 +20,19 @@ func init() {
 }
 
 //NetPost ...
-func NetPost(p *interfaces.Object) int {
-	body, _ := convert.Struct2Reader(p)
-	r := reflect.ValueOf(*p).Elem()
-	v := r.FieldByName("DeviceRouter").String()
-	URL := "https://" + conf.Config[conf.ConstServerAddr] + ":" + conf.Config[conf.ConstServerPort] + "/" + v
+func NetPost(p *interfaces.Producers) int {
+	pr := reflect.ValueOf(*p).Elem()
+	// perr := pr.FieldByName("Error").IsNil()
+	// if perr != true {
+	// 	pr.FieldByName("DeviceRouter").SetString(conf.ConstRouterGetObjectRestart)
+	// }
+
+	URL := "https://" + conf.Config[conf.ConstServerAddr] + ":" + conf.Config[conf.ConstServerPort] + pr.FieldByName("DeviceRouter").String()
+
 	method := "POST"
+
+	body, _ := convert.Struct2Reader(*p)
+
 	//create post req
 	postReq, err := http.NewRequest(
 		method,

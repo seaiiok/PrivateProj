@@ -1,0 +1,61 @@
+package producers
+
+import (
+	"ifix.cbpc/cbpc/pkg/conf"
+	"ifix.cbpc/cbpc/pkg/db"
+	"ifix.cbpc/cbpc/pkg/protocol"
+	"ifix.cbpc/cbpc/pkg/utils"
+)
+
+//OnlineLog ...
+type OnlineLog struct {
+	protocol.Proto
+}
+
+//SetObjectInfo ...
+func (p *OnlineLog) SetObjectInfo() {
+	p.SetErrorNil()
+	p.Device.DeviceIP = utils.GetLocalMatchIp(conf.ConstMatchIP)
+	p.Device.DeviceName = "在线清数日志"
+	p.Device.DeviceTask = conf.Config[conf.ConstClientsTask]
+	p.Device.DeviceRouter = conf.ConstRouterGetObjectInfo
+	p.SQL.DatabaseDriver = conf.Config[conf.ConstClientsDriver]
+	p.SQL.DatabaseSource = conf.Config[conf.ConstClientsSource]
+}
+
+//SetObjectConf ...
+func (p *OnlineLog) SetObjectConf() {
+	err := db.Init(p.SQL.DatabaseDriver, p.SQL.DatabaseSource)
+	if err != nil {
+		p.SetError(true)
+	}
+	p.SQL.DatabaseDriver = conf.Config[conf.ConstServerDriver]
+	p.SQL.DatabaseSource = conf.Config[conf.ConstServerSource]
+}
+
+//SetObjectKeys ...
+func (p *OnlineLog) SetObjectKeys() {
+	var err error
+	p.SQL.QuerySQL = conf.Config[conf.ConstClientsKeys]
+	p.SQL.Args, err = db.Query(p.SQL.QuerySQL)
+	if err != nil {
+		p.SetError(true)
+	}
+	p.SQL.QuerySQL = conf.Config[conf.ConstServerKeys]
+}
+
+//SetObjectDatas ...
+func (p *OnlineLog) SetObjectDatas() {
+	var err error
+	p.SQL.QuerySQL = conf.Config[conf.ConstClientsData]
+	p.SQL.QuerySQL, err = getFulQuery(p.SQL.QuerySQL, p.SQL.Args)
+	if err != nil {
+		p.SetError(true)
+	} else {
+		p.SQL.Data, err = db.Querys(p.SQL.QuerySQL)
+	}
+	if err != nil {
+		p.SetError(true)
+	}
+	p.SQL.InsertSQL = conf.Config[conf.ConstServerData]
+}

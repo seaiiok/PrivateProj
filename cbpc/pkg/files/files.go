@@ -6,6 +6,8 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -27,13 +29,40 @@ func GetAllFiles() (f fc) {
 	return f
 }
 
-func GetNeedFiles(path []string, inp []int) (res []string) {
+func GetNeedFilesInp(path []string, inp string) (res []string) {
+	inps := strings.Split(inp, "|")
+	in := make([]int, 0)
+	for _, v := range inps {
+		is, err := strconv.Atoi(v)
+		if err == nil {
+			in = append(in, is)
+		}
+	}
 	for i := 0; i < len(path); i++ {
 		paths := strings.Split(path[i], "\\")
-		for j := 0; j < len(inp); j++ {
-			if len(paths) == inp[j] {
+		for j := 0; j < len(in); j++ {
+			if len(paths) == in[j] {
 				res = append(res, path[i])
 			}
+		}
+	}
+	return
+}
+
+func GetNeedFilesMatch(paths []string, mat string) (res []string) {
+	res = make([]string, 0)
+	ma := strings.Split(mat, "|")
+	for _, v := range paths {
+		filename := filepath.Base(v)	
+		b := false
+		for _, m := range ma {
+			b = strings.Contains(filename, m)			
+			if b != true {
+				continue
+			}
+		}
+		if b {
+			res = append(res, v)
 		}
 	}
 	return

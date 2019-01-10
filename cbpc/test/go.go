@@ -1,8 +1,10 @@
-package db
+package main
 
 import (
 	"database/sql"
+	"fmt"
 	"reflect"
+	"strings"
 	"sync"
 
 	_ "github.com/alexbrainman/odbc" // mssql odbc driver
@@ -22,40 +24,25 @@ func Init(drivername, datasourcename string) (err error) {
 	return msdb.Ping()
 }
 
-// Exec general
-func Exec(constr string) error {
-	stmt, err := msdb.Prepare(constr)
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-	_, err = stmt.Exec()
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 // Query  should query one col or panic
 func Query(constr string) (res []string, err error) {
 	res = make([]string, 0)
 	stmt, err := msdb.Prepare(constr)
-	if err != nil {
-		return
-	}
-	defer stmt.Close()
-	rows, err := stmt.Query()
+	fmt.Println("err1:", err)
 
-	if err != nil || rows ==nil {
+	rows, err := stmt.Query()
+	fmt.Println("err2:", err)
+	fmt.Println("rows", rows)
+	if err != nil || rows == nil {
 		return
 	}
 
 	for rows.Next() {
 		row := sql.NullString{}
 		err = rows.Scan(&row)
-		if err != nil {
-			return
-		}
+
+		fmt.Println("err3:", err)
+
 		if row.Valid {
 			res = append(res, row.String)
 		} else {
@@ -63,7 +50,16 @@ func Query(constr string) (res []string, err error) {
 		}
 
 	}
-	defer rows.Close()
+
+	defer func() {
+		fmt.Println("defer1:", err)
+		stmt.Close()
+	}()
+
+	defer func() {
+		fmt.Println("defer2:", err)
+		rows.Close()
+	}()
 	return
 }
 
@@ -75,10 +71,7 @@ func Querys(constr string) (res [][]string, err error) {
 		return
 	}
 	defer stmt.Close()
-	rows, err := stmt.Query()
-	if err != nil || rows ==nil {
-		return
-	}
+	rows, _ := stmt.Query()
 	cols, err := rows.Columns()
 	if err != nil {
 		return
@@ -105,66 +98,6 @@ func Querys(constr string) (res [][]string, err error) {
 	return
 }
 
-//Querys2Map only query like key value
-func Querys2Map(constr string) (res map[string]string, err error) {
-	res = make(map[string]string, 0)
-	stmt, err := msdb.Prepare(constr)
-	if err != nil {
-		return
-	}
-	defer stmt.Close()
-	rows, err := stmt.Query()
-	if err != nil || rows ==nil {
-		return
-	}
-	cols, err := rows.Columns()
-	if err != nil {
-		return
-	}
-	for rows.Next() {
-		arr := make([]interface{}, len(cols))
-		// re := make([]string,len(cols))
-		for i := 0; i < len(cols); i++ {
-			arr[i] = new(sql.NullString)
-		}
-		err = rows.Scan(arr...)
-		if err != nil {
-			return
-		}
-		if len(arr) == 2 {
-			ktemp := reflect.ValueOf(arr[0])
-			ktem := ktemp.Interface().(*sql.NullString)
-			vtemp := reflect.ValueOf(arr[1])
-			vtem := vtemp.Interface().(*sql.NullString)
-			res[ktem.String] = vtem.String
-		}
-	}
-	defer rows.Close()
-	return
-}
-
-//Insert insert one row
-func Insert(constr string, res []string) (err error) {
-	conn, err := msdb.Begin()
-	re := make([]interface{}, len(res))
-	for i := 0; i < len(res); i++ {
-		re[i] = res[i]
-	}
-	stmt, err := msdb.Prepare(constr)
-	if err != nil {
-		return
-	}
-	defer stmt.Close()
-	_, err = stmt.Exec(re...)
-	if err != nil {
-		conn.Rollback()
-		return
-	}
-	conn.Commit()
-	defer stmt.Close()
-	return
-}
-
 //Inserts insert more rows
 func Inserts(constr string, res [][]string) (err error) {
 	conn, err := msdb.Begin()
@@ -174,12 +107,12 @@ func Inserts(constr string, res [][]string) (err error) {
 		for i := 0; i < len(res[c]); i++ {
 			re[i] = res[c][i]
 		}
-		stmt, err := msdb.Prepare(constr)
+		stmt, _ := msdb.Prepare(constr)
 		if err != nil {
 			conn.Rollback()
 		}
 		defer stmt.Close()
-		_, err = stmt.Exec(re...)
+		_, err := stmt.Exec(re...)
 		if err != nil {
 			conn.Rollback()
 		}
@@ -188,3 +121,21 @@ func Inserts(constr string, res [][]string) (err error) {
 	conn.Commit()
 	return
 }
+
+func main() {
+	// clientsdriver := "odbc"
+	// clientssource := "driver={SQL Server};Server=192.168.1.18;uid=sa;pwd=kmtSoft12345678;port=1433;Database=CMTWeight121702"
+	// err := Init(clientsdriver, clientssource)
+	// fmt.Println(err)
+	serverkeys := "a and b and c"
+	// res, err := Query(serverkeys)
+	// fmt.Println(err)
+	// fmt.Println(res)
+	// fmt.Println("exit ok")
+
+	x2:=strings.TrimSpace(serverkeys)
+	x2=strings.TrimSuffix(serverkeys, "c")
+	fmt.Println(x2)
+}
+
+// serverkeys=select top 9000 F_ID from iFixsvr_D3Weight where F_IsFinish='1'  order by F_ID desc

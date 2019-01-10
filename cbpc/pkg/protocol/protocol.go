@@ -1,22 +1,16 @@
-package proto
+package protocol
 
 //Proto user protocol
 type Proto struct {
 	Err
-	Config
-	Sql
+	SQL
 	Device
 }
 
 //Err user protocol
 type Err struct {
-	Err          error
-	processTrace []string
-}
-
-//config user protocol
-type Config struct {
-	Config map[string]string
+	Error        bool
+	ProcessTrace []string
 }
 
 //Device user protocol
@@ -27,12 +21,12 @@ type Device struct {
 	DeviceRouter string
 }
 
-//Sql user protocol
-type Sql struct {
+//SQL user protocol
+type SQL struct {
 	DatabaseDriver string
 	DatabaseSource string
-	Insert         string
-	Query          string
+	InsertSQL      string
+	QuerySQL       string
 	Args           []string
 	Data           [][]string
 }

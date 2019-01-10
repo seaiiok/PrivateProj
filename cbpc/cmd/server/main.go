@@ -1,10 +1,7 @@
 package main
 
-import (
-	"ifix.cbpc/cbpc/internal/app/server.app"
-)
+import app "ifix.cbpc/cbpc/internal/app/server.app"
 
 func main() {
 	app.ServiceStart()
 }
-
