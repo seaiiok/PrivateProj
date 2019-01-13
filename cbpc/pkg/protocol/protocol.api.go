@@ -29,6 +29,7 @@ func NewProto() *Proto {
 			DeviceIP:     "",
 			DeviceTask:   "",
 			DeviceRouter: "",
+			DeviceStatusCode:0,
 		},
 	}
 }

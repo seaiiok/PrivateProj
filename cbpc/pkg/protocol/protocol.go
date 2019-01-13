@@ -19,6 +19,7 @@ type Device struct {
 	DeviceIP     string
 	DeviceTask   string
 	DeviceRouter string
+	DeviceStatusCode int
 }
 
 //SQL user protocol

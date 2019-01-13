@@ -2,44 +2,41 @@ package app
 
 import (
 	"fmt"
-	"reflect"
-	"time"
-
-	"ifix.cbpc/cbpc/internal/pkg/producers"
+	d3weight "ifix.cbpc/cbpc/internal/pkg/producers/d3weight" // offlinezip "ifix.cbpc/cbpc/internal/pkg/producers/offlinezip"
 	"ifix.cbpc/cbpc/pkg/conf"
 	"ifix.cbpc/cbpc/pkg/interfaces"
+	"reflect"
+	"time" // onlinelog "ifix.cbpc/cbpc/internal/pkg/producers/onlinelog"
 )
 
 func clientsServiceStart() {
-	var statuscode int = 200
-	go clientsStart(&statuscode)
-	go reconn(&statuscode)
+	go clientsStart()
 
 }
 
 // ServiceStart ...
-func clientsStart(statuscode *int) {
+func clientsStart() {
 	var o interfaces.Producers
-
+	reconn := 3
 	switch conf.Config[conf.ConstClientsTask] {
 	case conf.ConstClientsTaskD3Weight:
-		o = new(producers.D3weight)
+		o = new(d3weight.D3weight)
 	case conf.ConstClientsTaskOnlineLog:
-		o = new(producers.OnlineLog)
+		// o = new(onlinelog.OnlineLog)
 	case conf.ConstClientsTaskOfflineZip:
-		o = new(producers.OfflineZip)
+		// o = new(offlinezip.OfflineZip)
 	default:
 	}
-	
+
 	o.SetObjectInfo()
 	for {
-		for *statuscode == 200 {
+		rv := reflect.ValueOf(o).Elem()
+		dr := rv.FieldByName(conf.ConstHTTPRouter).String()
+		deviceStatusCode := rv.FieldByName(conf.ConstHTTPStatusCode).Int()
+		for deviceStatusCode == conf.ConstHTTPStatusCodeOK {
+			fmt.Println("ho")
+			switch dr {
 
-			prouter := reflect.ValueOf(o).Elem()
-			proute := prouter.FieldByName("DeviceRouter").String()
-			pro := prouter.FieldByName("ProcessTrace")
-			fmt.Println(pro)
-			switch proute {
 			case conf.ConstRouterGetObjectInfo:
 				o.SetObjectInfo()
 			case conf.ConstRouterGetObjectConf:
@@ -49,31 +46,29 @@ func clientsStart(statuscode *int) {
 			case conf.ConstRouterGetObjectDatas:
 				o.SetObjectDatas()
 			case conf.ConstRouterGetObjectAgain:
-				time.Sleep(conf.ConstWaitTime * time.Second)
+				// time.Sleep(conf.ConstWaitTime * time.Second)
 				o.SetObjectConf()
 			case conf.ConstRouterGetObjectRestart:
 				time.Sleep(conf.ConstWaitTime * time.Second)
 				o.SetObjectInfo()
-
 			default:
-				fmt.Println("default")
+				time.Sleep(conf.ConstWaitTime * time.Second)
+				o.SetObjectInfo()
 			}
 
-			*statuscode = NetPost(&o)
+			o.SetObjectPost(client)
+			dr = rv.FieldByName(conf.ConstHTTPRouter).String()
+			deviceStatusCode = rv.FieldByName(conf.ConstHTTPStatusCode).Int()
+		}
+
+		if deviceStatusCode != conf.ConstHTTPStatusCodeOK {
+			time.Sleep(time.Duration(reconn*conf.ConstWaitTime) * time.Second)
+			reconn++
+			if reconn >= 3 {
+				rv.FieldByName(conf.ConstHTTPStatusCode).SetInt(conf.ConstHTTPStatusCodeOK)
+				reconn = 0
+			}
 		}
 	}
 
-}
-
-func reconn(statuscode *int) {
-	for {
-		// statuscode.reConnSum++
-
-		if *statuscode != 200 {
-			time.Sleep(conf.ConstWaitTime * time.Second)
-			*statuscode = 200
-			// statuscode.reConnSum = 0
-		}
-		time.Sleep(10 * conf.ConstWaitTime * time.Second)
-	}
 }

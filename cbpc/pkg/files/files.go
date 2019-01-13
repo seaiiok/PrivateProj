@@ -57,12 +57,10 @@ func GetNeedFilesMatch(paths []string, mat string) (res []string) {
 		b := false
 		for _, m := range ma {
 			b = strings.Contains(filename, m)			
-			if b != true {
+			if b == true {
+				res = append(res, v)
 				continue
 			}
-		}
-		if b {
-			res = append(res, v)
 		}
 	}
 	return

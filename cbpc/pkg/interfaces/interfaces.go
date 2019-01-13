@@ -1,5 +1,7 @@
 package interfaces
 
+import "net/http"
+
 // Object collector interface
 type Object interface {
 	Consumers
@@ -20,4 +22,5 @@ type Producers interface {
 	SetObjectConf()
 	SetObjectKeys()
 	SetObjectDatas()
+	SetObjectPost(*http.Client)
 }

@@ -1,15 +1,12 @@
-/*
-Package producers its a collector for cbpm. 
+package producer
 
-All data collector should be implements interface "Producers" or  "Object". see example!
+import (
+	"net/http"
 
-here collectors for "成都印钞厂MES数据采集项目"
-
-user protocol error should use SetError method ,or headache!
-oops! :)
-
-example:
-
+	"ifix.cbpc/cbpc/pkg/conf"
+	"ifix.cbpc/cbpc/pkg/convert"
+	"ifix.cbpc/cbpc/pkg/protocol"
+)
 
 //Example ...
 type Example struct {
@@ -68,7 +65,3 @@ func (p *Example) SetObjectKeys() {
 func (p *Example) SetObjectDatas() {
 
 }
-
-
-*/
-package producers

@@ -11,7 +11,7 @@ import (
 
 //clients info
 func routerGetObjectInfo(w http.ResponseWriter, r *http.Request) {
-	
+
 	var o interfaces.Consumers
 	p := new(consumers.Objects)
 	o = p
@@ -19,16 +19,14 @@ func routerGetObjectInfo(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		p.SetError(true)
 	}
-	
+
 	if p.Err.Error != false {
 		p.SetRouter(conf.ConstRouterGetObjectConf)
 		p.SetProcessTrace(p.Device.DeviceRouter)
 		b, _ := convert.Struct2Arraybytes(o)
 		w.Write(b)
-
 		return
 	}
-
 	p.SetRouter(conf.ConstRouterGetObjectConf)
 	p.SetProcessTrace(p.Device.DeviceRouter)
 	b, _ := convert.Struct2Arraybytes(o)

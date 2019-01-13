@@ -18,9 +18,12 @@ const (
 
 //system use
 const (
-	ConstHTTPMethod = "POST"
-	ConstWaitTime   = 1
-	ConstMatchIP="192."
+	ConstHTTPRouter     = "DeviceRouter"
+	ConstHTTPStatusCode = "DeviceStatusCode"
+	ConstHTTPStatusCodeOK = 200
+	ConstHTTPMethod     = "POST"
+	ConstWaitTime       = 2
+	ConstMatchIP        = "192."
 )
 
 //client config

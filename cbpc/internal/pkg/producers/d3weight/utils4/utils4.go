@@ -1,11 +1,11 @@
-package producers
+package utils4
 
 import (
 	"errors"
 	"strings"
 )
 
-func getFulQuery(querysql string, args []string) (string, error) {
+func GetFulQuery(querysql string, args []string) (string, error) {
 	fullparams := ""
 	err := errors.New("error sql query string")
 	if len(args) <= 0 {

@@ -1,8 +1,6 @@
 package consumers
 
 import (
-	"fmt"
-
 	"ifix.cbpc/cbpc/pkg/db"
 	"ifix.cbpc/cbpc/pkg/protocol"
 	"ifix.cbpc/cbpc/pkg/utils"
@@ -34,7 +32,6 @@ func (p *Objects) GetObjectKeys() {
 		p.SetError(true)
 	}
 	r := utils.ArrayDiff(p.SQL.Args, res)
-	fmt.Println("数组差异:", r)
 	p.SetArgs(r)
 }
 
