@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"net/http"
 
 	"ifix.cbpc/cbpc/internal/pkg/consumers"
@@ -27,6 +28,7 @@ func routerGetObjectInfo(w http.ResponseWriter, r *http.Request) {
 		w.Write(b)
 		return
 	}
+
 	p.SetRouter(conf.ConstRouterGetObjectConf)
 	p.SetProcessTrace(p.Device.DeviceRouter)
 	b, _ := convert.Struct2Arraybytes(o)
@@ -35,6 +37,7 @@ func routerGetObjectInfo(w http.ResponseWriter, r *http.Request) {
 
 //server config
 func routerGetObjectConf(w http.ResponseWriter, r *http.Request) {
+
 	var o interfaces.Consumers
 	p := new(consumers.Objects)
 	o = p
@@ -43,13 +46,11 @@ func routerGetObjectConf(w http.ResponseWriter, r *http.Request) {
 		p.SetError(true)
 	}
 	o.GetObjectConf()
-
 	if p.Err.Error != false {
 		p.SetRouter(conf.ConstRouterGetObjectKeys)
 		p.SetProcessTrace(p.Device.DeviceRouter)
 		b, _ := convert.Struct2Arraybytes(o)
 		w.Write(b)
-
 		return
 	}
 	p.SetRouter(conf.ConstRouterGetObjectKeys)
@@ -84,6 +85,7 @@ func routerGetObjectKeys(w http.ResponseWriter, r *http.Request) {
 
 //get clients data
 func routerGetObjectDatas(w http.ResponseWriter, r *http.Request) {
+
 	var o interfaces.Consumers
 	p := new(consumers.Objects)
 	o = p
@@ -91,7 +93,12 @@ func routerGetObjectDatas(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		p.SetError(true)
 	}
-
+	fmt.Println("insert:", p.InsertSQL)
+	for i := 0; i < len(p.SQL.Data); i++ {
+		fmt.Println(p.SQL.Data[i])
+	}
+	fmt.Println("data:", p.SQL.Data)
+	fmt.Println("err:", p.Error)
 	if p.Err.Error != false {
 		p.SetRouter(conf.ConstRouterGetObjectAgain)
 		p.SetProcessTrace(p.Device.DeviceRouter)

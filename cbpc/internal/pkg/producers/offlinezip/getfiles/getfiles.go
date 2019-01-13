@@ -64,7 +64,7 @@ func (f *FilesInfo) GetFilesInfo(name string, ip string) {
 }
 
 func (f *FilesInfo) GetFilesData(paths []string, ip string, name string) {
-	f.FilesInfo = make([]FileInfo, 0)
+	f.FilesInfo = make([]FileInfo, len(paths))
 	for i := 0; i < len(paths); i++ {
 
 		fs, err := os.Stat(paths[i])
@@ -80,6 +80,7 @@ func (f *FilesInfo) GetFilesData(paths []string, ip string, name string) {
 		f.FilesInfo[i].J_FileCreateD = tm.Format("2006-01-02")
 		f.FilesInfo[i].J_FileCreateDT = tm.Format("2006-01-02 15:04:05")
 		f.FilesInfo[i].J_FileName = filepath.Base(paths[i])
+		f.FilesInfo[i].J_FilePath = paths[i]
 
 		f.FilesInfo[i].FileData = make([]string, 0)
 		f.FilesInfo[i].FileData = files.ReadZipLines(paths[i])
@@ -94,19 +95,30 @@ func GetRowsData(row []string) [][]string {
 	for i := 0; i < len(row); i++ {
 		re := make([]string, 0)
 		rowarr := strings.Split(row[i], " ")
+
 		lenrow := len(rowarr)
+
 		if lenrow >= 4 {
 			StdNo := rowarr[0]
 			PKNo := rowarr[1]
 			Coder := rowarr[lenrow-2]
 			Dout := rowarr[lenrow-1]
+
+			StdNo = strings.TrimSpace(StdNo)
+			PKNo = strings.TrimSpace(PKNo)
+			Coder = strings.TrimSpace(Coder)
+			Dout = strings.TrimSpace(Dout)
+
 			if len(StdNo) >= 12 && len(PKNo) >= 10 && len(Coder) == 2 && len(Dout) == 2 {
+			
 				if Coder == "80" {
 					GoodSum++
 				} else {
 					BadSum++
 				}
+	
 				re = append(re, strconv.Itoa(GoodSum), strconv.Itoa(BadSum), StdNo, PKNo, Coder, Dout)
+	
 			}
 		}
 		if len(re) == 6 {

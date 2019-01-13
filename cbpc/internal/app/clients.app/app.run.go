@@ -2,16 +2,17 @@ package app
 
 import (
 	"fmt"
-	d3weight "ifix.cbpc/cbpc/internal/pkg/producers/d3weight" // offlinezip "ifix.cbpc/cbpc/internal/pkg/producers/offlinezip"
-	"ifix.cbpc/cbpc/pkg/conf"
-	"ifix.cbpc/cbpc/pkg/interfaces"
 	"reflect"
 	"time" // onlinelog "ifix.cbpc/cbpc/internal/pkg/producers/onlinelog"
+
+	d3weight "ifix.cbpc/cbpc/internal/pkg/producers/d3weight"
+	offlinezip "ifix.cbpc/cbpc/internal/pkg/producers/offlinezip"
+	"ifix.cbpc/cbpc/pkg/conf"
+	"ifix.cbpc/cbpc/pkg/interfaces"
 )
 
 func clientsServiceStart() {
 	go clientsStart()
-
 }
 
 // ServiceStart ...
@@ -24,7 +25,7 @@ func clientsStart() {
 	case conf.ConstClientsTaskOnlineLog:
 		// o = new(onlinelog.OnlineLog)
 	case conf.ConstClientsTaskOfflineZip:
-		// o = new(offlinezip.OfflineZip)
+		o = new(offlinezip.OffilneZip)
 	default:
 	}
 
@@ -34,7 +35,8 @@ func clientsStart() {
 		dr := rv.FieldByName(conf.ConstHTTPRouter).String()
 		deviceStatusCode := rv.FieldByName(conf.ConstHTTPStatusCode).Int()
 		for deviceStatusCode == conf.ConstHTTPStatusCodeOK {
-			fmt.Println("ho")
+			fmt.Println(deviceStatusCode)
+			fmt.Println(dr)
 			switch dr {
 
 			case conf.ConstRouterGetObjectInfo:
